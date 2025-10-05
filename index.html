@@ -632,11 +632,24 @@
         const data = await res.json();
         // expected structure: {"Pending":10,"Cancelled":4,"Completed":16}
         if(typeof data === 'object' && data !== null){
-          if(data.Pending !== undefined) qs('#dashPending').textContent = data.Pending;
-          if(data.Cancelled !== undefined) qs('#dashCancelled').textContent = data.Cancelled;
-          if(data.Completed !== undefined) qs('#dashCompleted').textContent = data.Completed;
-          // keep a small mirror for reportPending too (optional)
-          if(data.Pending !== undefined) qs('#reportPending').textContent = data.Pending;
+          const pending = data.Pending || 0;
+const cancelled = data.Cancelled || 0;
+const completed = data.Completed || 0;
+
+qs('#dashPending').textContent = pending;
+qs('#dashCancelled').textContent = cancelled;
+qs('#dashCompleted').textContent = completed;
+
+// update total bookings as sum of the three
+qs('#dashBookings').textContent = pending + cancelled + completed;
+qs('#statBookings').textContent = pending + cancelled + completed;
+qs('#reportBookings').textContent = pending + cancelled + completed;
+
+// optional: keep reportPending updated
+qs('#reportPending').textContent = pending;
+
+
+          
         }
       } catch (err){
         console.error("Error fetching live stats:", err);
@@ -656,3 +669,4 @@
   </script>
 </body>
 </html>
+
