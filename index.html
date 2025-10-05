@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GTEC Conference Facility - Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #f5f6fa;
+    }
+
+    header {
+      background: #003366;
+      color: #fff;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    nav {
+      display: flex;
+      background: #004080;
+    }
+
+    nav a {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      color: #fff;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    nav a:hover,
+    nav a.active {
+      background: #0059b3;
+    }
+
+    main {
+      padding: 25px;
+    }
+
+    .dashboard-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      flex: 1 1 250px;
+      border-radius: 15px;
+      padding: 30px;
+      color: #fff;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .pending { background: linear-gradient(135deg, #ff4b5c, #ff1e3c); }
+    .cancelled { background: linear-gradient(135deg, #b2bec3, #636e72); }
+    .completed { background: linear-gradient(135deg, #00b894, #009874); }
+
+    .card h2 { font-size: 40px; margin: 0; font-weight: 700; }
+    .card p { font-size: 18px; margin-top: 8px; opacity: 0.9; }
+
+    .reports-container {
+      display: none;
+    }
+
+    .chart-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .chart-box h3 {
+      margin-bottom: 20px;
+      color: #003366;
+    }
+
+    @media (max-width: 768px) {
+      nav { flex-wrap: wrap; }
+      .dashboard-cards { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>GTEC Conference Facility - Admin Dashboard</h1>
+  </header>
+
+  <nav>
+    <a href="#" class="active" id="tab-dashboard">Dashboard</a>
+    <a href="#" id="tab-venues">Venues</a>
+    <a href="#" id="tab-users">Users</a>
+    <a href="#" id="tab-reports">Reports</a>
+    <a href="#" id="tab-invoices">Invoices</a>
+    <a href="#" id="tab-settings">Settings</a>
+  </nav>
+
+  <main>
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboard-section" class="dashboard-section">
+      <div class="dashboard-cards">
+        <div class="card pending">
+          <h2 id="pendingCount">0</h2>
+          <p>Pending</p>
+        </div>
+        <div class="card cancelled">
+          <h2 id="cancelledCount">0</h2>
+          <p>Cancelled</p>
+        </div>
+        <div class="card completed">
+          <h2 id="completedCount">0</h2>
+          <p>Completed</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS SECTION -->
+    <section id="reports-section" class="reports-container">
+      <div class="chart-box">
+        <h3>📅 Weekly Bookings</h3>
+        <canvas id="weeklyChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>📊 Monthly Summary</h3>
+        <canvas id="monthlyChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>🏢 Venue Usage</h3>
+        <canvas id="venueChart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxJvR0MJtnwjdX2MAQJ_lBCJ3S9eG1NrtMvRu4FOt-_maBQ7QzJtPmbF2quGL3HltWn/exec";
+
+    // ---------------- NAVIGATION ----------------
+    const tabs = document.querySelectorAll("nav a");
+    const dashboardSection = document.getElementById("dashboard-section");
+    const reportsSection = document.getElementById("reports-section");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", e => {
+        e.preventDefault();
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        if (tab.id === "tab-dashboard") {
+          dashboardSection.style.display = "block";
+          reportsSection.style.display = "none";
+        } else if (tab.id === "tab-reports") {
+          dashboardSection.style.display = "none";
+          reportsSection.style.display = "block";
+          loadReports();
+        } else {
+          dashboardSection.style.display = "none";
+          reportsSection.style.display = "none";
+        }
+      });
+    });
+
+    // ---------------- DASHBOARD COUNTS ----------------
+    async function loadDashboard() {
+      try {
+        const response = await fetch(`${WEB_APP_URL}?action=getCounts`);
+        const data = await response.json();
+
+        document.getElementById("pendingCount").textContent = data.Pending || 0;
+        document.getElementById("cancelledCount").textContent = data.Cancelled || 0;
+        document.getElementById("completedCount").textContent = data.Completed || 0;
+      } catch (err) {
+        console.error("Error loading dashboard:", err);
+      }
+    }
+
+    // ---------------- REPORTS (CHARTS) ----------------
+    async function loadReports() {
+      try {
+        const response = await fetch(`${WEB_APP_URL}?action=getAll`);
+        const data = await response.json();
+
+        // Extract necessary info
+        const statusData = { Pending: 0, Cancelled: 0, Completed: 0 };
+        const weeklyData = {};
+        const venueData = {};
+
+        data.forEach(row => {
+          const status = row["Status"];
+          const venue = row["Venue"] || "Unknown";
+          const date = new Date(row["Event Start Date"]);
+          const week = `${date.getFullYear()}-W${getWeekNumber(date)}`;
+
+          if (statusData[status] !== undefined) statusData[status]++;
+          if (!weeklyData[week]) weeklyData[week] = 0;
+          weeklyData[week]++;
+          venueData[venue] = (venueData[venue] || 0) + 1;
+        });
+
+        renderCharts(statusData, weeklyData, venueData);
+      } catch (err) {
+        console.error("Error loading reports:", err);
+      }
+    }
+
+    // ---------------- CHART FUNCTIONS ----------------
+    function renderCharts(statusData, weeklyData, venueData) {
+      const weeklyLabels = Object.keys(weeklyData);
+      const weeklyCounts = Object.values(weeklyData);
+
+      new Chart(document.getElementById("weeklyChart"), {
+        type: "line",
+        data: {
+          labels: weeklyLabels,
+          datasets: [{
+            label: "Bookings per Week",
+            data: weeklyCounts,
+            borderColor: "#0059b3",
+            backgroundColor: "rgba(0,89,179,0.2)",
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true }
+      });
+
+      new Chart(document.getElementById("monthlyChart"), {
+        type: "bar",
+        data: {
+          labels: ["Pending", "Cancelled", "Completed"],
+          datasets: [{
+            label: "Booking Summary",
+            data: [statusData.Pending, statusData.Cancelled, statusData.Completed],
+            backgroundColor: ["#ff4b5c", "#b2bec3", "#00b894"]
+          }]
+        },
+        options: { responsive: true }
+      });
+
+      new Chart(document.getElementById("venueChart"), {
+        type: "doughnut",
+        data: {
+          labels: Object.keys(venueData),
+          datasets: [{
+            label: "Venue Usage",
+            data: Object.values(venueData),
+            backgroundColor: [
+              "#0059b3", "#00b894", "#ff4b5c", "#636e72", "#6c5ce7", "#fdcb6e"
+            ]
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    // Helper: get week number
+    function getWeekNumber(date) {
+      const oneJan = new Date(date.getFullYear(), 0, 1);
+      const numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
+      return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
+    }
+
+    // ---------------- INITIAL LOAD ----------------
+    loadDashboard();
+    setInterval(loadDashboard, 30000);
+  </script>
+
+</body>
+</html>
