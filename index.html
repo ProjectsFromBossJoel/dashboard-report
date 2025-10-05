@@ -89,10 +89,6 @@
     /* custom invoice preview styling */
     #invoicePreview{max-width:800px;margin:0 auto}
     .hidden{display:none}
-
-    /* report canvases sizing */
-    .reports-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-    .report-wide{grid-column:1/3}
   </style>
 </head>
 <body>
@@ -229,24 +225,11 @@
         <div class="card">
           <h3>Reports</h3>
           <p class="muted">Quick revenue and booking exports</p>
-
-          <div class="reports-grid">
-            <div class="card report-wide">
-              <h4 style="margin-top:0">Bookings - Last 7 days</h4>
-              <canvas id="chartWeeklyBookings" height="90"></canvas>
-            </div>
-
-            <div class="card">
-              <h4 style="margin-top:0">Venue performance (Revenue)</h4>
-              <canvas id="chartVenuePerf" height="120"></canvas>
-            </div>
-
-            <div class="card">
-              <h4 style="margin-top:0">Revenue - Last 6 months</h4>
-              <canvas id="chartMonthlyRevenue" height="120"></canvas>
-            </div>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div style="flex:1" class="card"><b>Total Revenue</b><div id="reportRevenue">GHS 0</div></div>
+            <div style="flex:1" class="card"><b>Bookings Count</b><div id="reportBookings">0</div></div>
+            <div style="flex:1" class="card"><b>Pending</b><div id="reportPending">0</div></div>
           </div>
-
         </div>
       </section>
 
@@ -319,8 +302,6 @@
       qsa('.page').forEach(p=>p.classList.add('hidden'));
       qs('#'+pageId).classList.remove('hidden');
       qsa('.nav button').forEach(b=>b.classList.toggle('active', b.dataset.page===pageId));
-      // render reports when navigating to them (ensures charts size/visibility)
-      if(pageId === 'reports') renderReports();
     }
 
     // format currency
@@ -379,9 +360,6 @@
       });
     }
 
-    /*******************************
-     * Stats update (local + live)
-     *******************************/
     function updateStats(){
       // Keep booking-related stats updated from local invoices
       qs('#statBookings').textContent = invoices.length;
@@ -392,11 +370,11 @@
       const rev = invoices.reduce((s,i)=>s + (i.amount||0),0);
       qs('#reportRevenue').textContent = 'GHS ' + fmt(rev);
 
-      // NOTE: dashPending/dashCancelled/dashCompleted will be overwritten by fetchLiveStats() if live data is available
+      // NOTE: dashPending/dashCancelled/dashCompleted are populated via fetchLiveStats()
     }
 
     function updateUI(){
-      renderInstitutions(); renderVenues(); renderUsers(); renderInvoices(); updateStats(); renderChart(); renderReports(); 
+      renderInstitutions(); renderVenues(); renderUsers(); renderInvoices(); updateStats(); renderChart();
     }
 
     /*******************************
@@ -408,107 +386,7 @@
       const labels = venues.map(v=>v.name);
       const sums = venues.map(v=>invoices.filter(inv=>inv.venue===v.name).reduce((s,i)=>s+(i.amount||0),0));
       if(venueChart) venueChart.destroy();
-      venueChart = new Chart(ctx,{type:'bar',data:{labels, datasets:[{label:'Revenue by Venue', data:sums, tension:0.3}]}, options:{plugins:{legend:{display:false}}, responsive:true, maintainAspectRatio:false}});
-    }
-
-    // Reports charts
-    let weeklyBookingsChart = null;
-    let monthlyRevenueChart = null;
-    let venuePerfChart = null;
-
-    function renderReports(){
-      renderWeeklyBookings();
-      renderMonthlyRevenue();
-      renderVenuePerformance();
-    }
-
-    function parseDateISO(s){
-      // s expected as 'YYYY-MM-DD' or JS ISO; fallback
-      if(!s) return null;
-      const d = new Date(s);
-      if(isNaN(d)) {
-        // try split
-        const parts = s.split('-');
-        if(parts.length>=3) return new Date(parts[0], parts[1]-1, parts[2]);
-        return null;
-      }
-      return d;
-    }
-
-    function formatDayLabel(d){
-      return d.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'});
-    }
-
-    function renderWeeklyBookings(){
-      // last 7 days labels
-      const days = [];
-      for(let i=6;i>=0;i--){
-        const dt = new Date();
-        dt.setDate(dt.getDate() - i);
-        days.push(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate())); // normalized midnight
-      }
-      const labels = days.map(d=>formatDayLabel(d));
-      // count invoices whose date matches
-      const counts = days.map(day=>{
-        const dayStr = day.toISOString().slice(0,10);
-        return invoices.filter(inv => {
-          const d = parseDateISO(inv.date);
-          return d && d.toISOString().slice(0,10) === dayStr;
-        }).length;
-      });
-
-      const ctx = qs('#chartWeeklyBookings').getContext('2d');
-      if(weeklyBookingsChart) weeklyBookingsChart.destroy();
-      weeklyBookingsChart = new Chart(ctx, {
-        type:'line',
-        data:{labels, datasets:[{label:'Bookings', data:counts, fill:true, tension:0.3}]},
-        options:{plugins:{legend:{display:false}}, responsive:true, maintainAspectRatio:false}
-      });
-    }
-
-    function renderMonthlyRevenue(){
-      // last 6 months
-      const months = [];
-      const now = new Date();
-      for(let i=5;i>=0;i--){
-        const dt = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        months.push(dt);
-      }
-      const labels = months.map(m => m.toLocaleDateString(undefined,{month:'short', year:'numeric'}));
-      const sums = months.map(m=>{
-        const year = m.getFullYear();
-        const month = m.getMonth();
-        return invoices.reduce((s, inv)=>{
-          const d = parseDateISO(inv.date);
-          if(!d) return s;
-          if(d.getFullYear() === year && d.getMonth() === month) return s + (inv.amount||0);
-          return s;
-        }, 0);
-      });
-
-      const ctx = qs('#chartMonthlyRevenue').getContext('2d');
-      if(monthlyRevenueChart) monthlyRevenueChart.destroy();
-      monthlyRevenueChart = new Chart(ctx, {
-        type:'bar',
-        data:{labels, datasets:[{label:'Revenue', data:sums}]},
-        options:{plugins:{legend:{display:false}}, responsive:true, maintainAspectRatio:false}
-      });
-    }
-
-    function renderVenuePerformance(){
-      const labels = venues.map(v=>v.name);
-      const sums = venues.map(v=>invoices.filter(inv => inv.venue===v.name).reduce((s,i)=>s+(i.amount||0),0));
-      const ctx = qs('#chartVenuePerf').getContext('2d');
-      if(venuePerfChart) venuePerfChart.destroy();
-      venuePerfChart = new Chart(ctx, {
-        type:'horizontalBar' in Chart ? 'horizontalBar' : 'bar', // Chart.js v3 removed horizontalBar; if not available it will show normal bar
-        data:{labels, datasets:[{label:'Revenue', data:sums}]},
-        options:{
-          indexAxis: 'y', // makes it horizontal in Chart.js v3+
-          plugins:{legend:{display:false}},
-          responsive:true, maintainAspectRatio:false
-        }
-      });
+      venueChart = new Chart(ctx,{type:'bar',data:{labels, datasets:[{label:'Revenue by Venue', data:sums, tension:0.3}]}, options:{plugins:{legend:{display:false}}}});
     }
 
     /*******************************
@@ -742,7 +620,6 @@
     /*******************************
      * Live stats fetch from Google Apps Script Web App
      *******************************/
-    // your provided web app URL (reads counts from the sheet and returns JSON)
     const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzXyA69pX8nMGJjpVm-XFo4Vbk-w0CSBeN6-Y0uQQtEKKoZatbV8KisJLqMcKtyeZx4/exec";
 
     async function fetchLiveStats(){
@@ -758,22 +635,8 @@
           if(data.Pending !== undefined) qs('#dashPending').textContent = data.Pending;
           if(data.Cancelled !== undefined) qs('#dashCancelled').textContent = data.Cancelled;
           if(data.Completed !== undefined) qs('#dashCompleted').textContent = data.Completed;
-          // also mirror pending to quick stat
-          if(data.Pending !== undefined) qs('#statPending').textContent = data.Pending;
-          // if full set present compute total as sum of categories (preferred)
-          if(data.Pending !== undefined && data.Cancelled !== undefined && data.Completed !== undefined){
-            const total = Number(data.Pending) + Number(data.Cancelled) + Number(data.Completed);
-            qs('#dashBookings').textContent = total;
-            qs('#statBookings').textContent = total;
-            qs('#reportBookings').textContent = total;
-          } else {
-            // fallback: keep local invoices count
-            qs('#dashBookings').textContent = invoices.length;
-            qs('#statBookings').textContent = invoices.length;
-            qs('#reportBookings').textContent = invoices.length;
-          }
-          // update reports after receiving live numbers
-          renderReports();
+          // keep a small mirror for reportPending too (optional)
+          if(data.Pending !== undefined) qs('#reportPending').textContent = data.Pending;
         }
       } catch (err){
         console.error("Error fetching live stats:", err);
