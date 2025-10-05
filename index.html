@@ -50,6 +50,24 @@
     .table th{background:transparent;color:var(--muted);font-weight:700}
     .table tr:hover td{background:#fbfdff}
 
+    /* Stat cards on dashboard: use 4 across */
+    .dashboard-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+
+    /* colored stat cards */
+    .stat-card{border-radius:12px;padding:18px;color:#0f172a;transition:transform .18s ease,box-shadow .18s ease}
+    .stat-card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(31,41,55,0.12)}
+    .stat-card .small{opacity:0.9}
+    .stat-card h2{margin:6px 0 0;font-size:28px}
+
+    .stat-red{background:linear-gradient(180deg,#fff5f5,#fff);border:1px solid rgba(239,68,68,0.08)}
+    .stat-red .label-pill{background:#fee2e2;color:#b91c1c;border-radius:999px;padding:6px 10px;font-weight:700}
+
+    .stat-ash{background:linear-gradient(180deg,#f6f6f7,#fff);border:1px solid rgba(15,23,42,0.03)}
+    .stat-ash .label-pill{background:#f3f4f6;color:#374151;border-radius:999px;padding:6px 10px;font-weight:700}
+
+    .stat-green{background:linear-gradient(180deg,#f0fdf4,#fff);border:1px solid rgba(16,185,129,0.06)}
+    .stat-green .label-pill{background:#dcfce7;color:#065f46;border-radius:999px;padding:6px 10px;font-weight:700}
+
     /* Forms & modal */
     .form-row{display:flex;gap:10px}
     label{font-size:13px;color:var(--muted)}
@@ -61,7 +79,7 @@
     footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
 
     /* Responsive */
-    @media (max-width:1000px){.grid{grid-template-columns:repeat(1,1fr)} .sidebar{display:none} .app{padding:12px}}
+    @media (max-width:1000px){.dashboard-cards{grid-template-columns:repeat(1,1fr)} .grid{grid-template-columns:repeat(1,1fr)} .sidebar{display:none} .app{padding:12px}}
 
     /* small helpers */
     .muted{color:var(--muted)}
@@ -117,21 +135,39 @@
       <!-- PAGES -->
 
       <section id="dashboard" class="page">
-        <div class="grid">
-          <div class="card">
+        <!-- Dashboard stat cards: 4 cards -->
+        <div class="dashboard-cards">
+          <div class="card stat-card">
             <div class="small muted">Total Bookings</div>
             <h2 id="dashBookings">0</h2>
             <div class="muted">Bookings by venue below</div>
           </div>
-          <div class="card">
-            <div class="small muted">Total Revenue</div>
-            <h2 id="dashRevenue">GHS 0</h2>
-            <div class="muted">Payments received</div>
-          </div>
-          <div class="card">
-            <div class="small muted">Pending Invoices</div>
+
+          <div class="card stat-card stat-red">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="small muted">Pending</div>
+              <div class="label-pill">🔴 Pending</div>
+            </div>
             <h2 id="dashPending">0</h2>
             <div class="muted">Awaiting payment</div>
+          </div>
+
+          <div class="card stat-card stat-ash">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="small muted">Cancelled</div>
+              <div class="label-pill">⚪ Cancelled</div>
+            </div>
+            <h2 id="dashCancelled">0</h2>
+            <div class="muted">Bookings cancelled</div>
+          </div>
+
+          <div class="card stat-card stat-green">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="small muted">Completed</div>
+              <div class="label-pill">🟢 Completed</div>
+            </div>
+            <h2 id="dashCompleted">0</h2>
+            <div class="muted">Successfully completed</div>
           </div>
         </div>
 
@@ -242,16 +278,13 @@
       {id:3,name:'Coordinator',email:'coord@gtec.edu.gh',role:'Coordinator'}
     ];
 
-    // invoices example (initial fallback - will be replaced by fetched sheet data)
+    // invoices example
     let venues = JSON.parse(localStorage.getItem('gtec_venues')) || sampleVenues;
     let institutions = JSON.parse(localStorage.getItem('gtec_institutions')) || sampleInstitutions;
     let users = JSON.parse(localStorage.getItem('gtec_users')) || sampleUsers;
     let invoices = JSON.parse(localStorage.getItem('gtec_invoices')) || [];
 
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxJvR0MJtnwjdX2MAQJ_lBCJ3S9eG1NrtMvRu4FOt-_maBQ7QzJtPmbF2quGL3HltWn/exec";
-
     function persist(){
-      // keep local storage saving for offline or manual edits - do not overwrite fetched data automatically
       localStorage.setItem('gtec_venues', JSON.stringify(venues));
       localStorage.setItem('gtec_institutions', JSON.stringify(institutions));
       localStorage.setItem('gtec_users', JSON.stringify(users));
@@ -281,9 +314,9 @@
      * Renderers
      *******************************/
     function renderInstitutions(){
-      const tbody = qs('#institutionsTable tbody'); if(!tbody) return; tbody.innerHTML = '';
+      const tbody = qs('#institutionsTable tbody'); tbody.innerHTML = '';
       institutions.forEach(inst=>{
-        const count = invoices.filter(i=>i.institutionId===inst.id || i.institution===inst.name).length;
+        const count = invoices.filter(i=>i.institutionId===inst.id).length;
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${inst.name}</td><td>${inst.coordinator||''}</td><td>${inst.email||''}</td><td>${count}</td><td><button data-id='${inst.id}' class='btn ghost editInst'>Edit</button></td>`;
         tbody.appendChild(tr);
@@ -291,7 +324,7 @@
     }
 
     function renderVenues(){
-      const tbody = qs('#venuesTable tbody'); if(!tbody) return; tbody.innerHTML = '';
+      const tbody = qs('#venuesTable tbody'); tbody.innerHTML = '';
       venues.forEach(v=>{
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${v.name}</td><td>GHS ${fmt(v.base)}</td><td>GHS ${fmt(v.withServices)}</td><td><button data-id='${v.id}' class='btn ghost editVenue'>Edit</button></td>`;
@@ -300,7 +333,7 @@
     }
 
     function renderUsers(){
-      const tbody = qs('#usersTable tbody'); if(!tbody) return; tbody.innerHTML = '';
+      const tbody = qs('#usersTable tbody'); tbody.innerHTML = '';
       users.forEach(u=>{
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${u.name}</td><td>${u.email}</td><td>${u.role}</td><td><button data-id='${u.id}' class='btn ghost editUser'>Edit</button></td>`;
@@ -309,37 +342,35 @@
     }
 
     function renderInvoices(){
-      const tbody = qs('#invoicesTable tbody'); if(!tbody) return; tbody.innerHTML = '';
+      const tbody = qs('#invoicesTable tbody'); tbody.innerHTML = '';
       invoices.slice().reverse().forEach(inv=>{
         const inst = institutions.find(i=>i.id===inv.institutionId) || {name:inv.institution};
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${inv.invoiceNo || inv.id}</td><td>${inst.name || inv.institution || inv.coordinator}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.date || ''}</td><td>${inv.status || ''}</td><td><button class='btn ghost previewInv' data-id='${inv.id}'>Preview</button> <button class='btn' data-id='${inv.id}' data-action='download'>PDF</button></td>`;
+        tr.innerHTML = `<td>${inv.invoiceNo}</td><td>${inst.name || inv.institution}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.date}</td><td>${inv.status}</td><td><button class='btn ghost previewInv' data-id='${inv.id}'>Preview</button> <button class='btn' data-id='${inv.id}' data-action='download'>PDF</button></td>`;
         tbody.appendChild(tr);
       });
 
       // recent
-      const recentBody = qs('#recentInvoicesTable tbody'); if(!recentBody) return; recentBody.innerHTML = '';
+      const recentBody = qs('#recentInvoicesTable tbody'); recentBody.innerHTML = '';
       invoices.slice(-5).reverse().forEach(inv=>{
         const inst = institutions.find(i=>i.id===inv.institutionId) || {name:inv.institution};
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${inv.invoiceNo || inv.id}</td><td>${inst.name||inv.institution||inv.coordinator}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.status||''}</td>`;
+        tr.innerHTML = `<td>${inv.invoiceNo}</td><td>${inst.name||inv.institution}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.status}</td>`;
         recentBody.appendChild(tr);
       });
     }
 
     function updateStats(){
+      // Keep booking-related stats updated from local invoices
       qs('#statBookings').textContent = invoices.length;
-      const rev = invoices.reduce((s,i)=>s + (i.amount||0),0);
-      qs('#statRevenue').textContent = 'GHS ' + fmt(rev);
-      qs('#statPending').textContent = invoices.filter(i=>i.status && i.status.toLowerCase()==='pending').length;
-
       qs('#dashBookings').textContent = invoices.length;
-      qs('#dashRevenue').textContent = 'GHS ' + fmt(rev);
-      qs('#dashPending').textContent = invoices.filter(i=>i.status && i.status.toLowerCase()==='pending').length;
-
-      qs('#reportRevenue').textContent = 'GHS ' + fmt(rev);
       qs('#reportBookings').textContent = invoices.length;
-      qs('#reportPending').textContent = invoices.filter(i=>i.status && i.status.toLowerCase()==='pending').length;
+
+      // Keep reportRevenue computed locally (if you have amounts in invoices)
+      const rev = invoices.reduce((s,i)=>s + (i.amount||0),0);
+      qs('#reportRevenue').textContent = 'GHS ' + fmt(rev);
+
+      // NOTE: dashPending/dashCancelled/dashCompleted are populated via fetchLiveStats()
     }
 
     function updateUI(){
@@ -351,97 +382,11 @@
      *******************************/
     let venueChart = null;
     function renderChart(){
-      const canvas = document.getElementById('venueChart');
-      if(!canvas) return;
-      const ctx = canvas.getContext('2d');
+      const ctx = document.getElementById('venueChart').getContext('2d');
       const labels = venues.map(v=>v.name);
       const sums = venues.map(v=>invoices.filter(inv=>inv.venue===v.name).reduce((s,i)=>s+(i.amount||0),0));
       if(venueChart) venueChart.destroy();
       venueChart = new Chart(ctx,{type:'bar',data:{labels, datasets:[{label:'Revenue by Venue', data:sums, tension:0.3}]}, options:{plugins:{legend:{display:false}}}});
-    }
-
-    /*******************************
-     * Fetch live data from Google Apps Script web app
-     *******************************/
-    async function fetchData(){
-      try {
-        const res = await fetch(WEB_APP_URL);
-        if(!res.ok){
-          console.warn('Fetch failed, status:', res.status);
-          return;
-        }
-        const data = await res.json();
-
-        // If the web app returned an object with counts (Pending/Cancelled/Completed)
-        if(!Array.isArray(data) && typeof data === 'object' && (data.Pending !== undefined || data.Cancelled !== undefined || data.Completed !== undefined)) {
-          // only update counts where possible (keep invoices as-is)
-          const counts = data;
-          // set temporary invoices counts (not full list)
-          // update the small cards
-          // translate counts into summary displays
-          // We update dash cards and quick stats based on counts
-          const pendingCount = counts.Pending || 0;
-          const cancelledCount = counts.Cancelled || 0;
-          const completedCount = counts.Completed || 0;
-          // Update places that show counts: dashPending and statPending; other fields still come from invoices
-          qs('#dashPending').textContent = pendingCount;
-          qs('#statPending').textContent = pendingCount;
-          // Keep other stats derived from invoices if present
-          return;
-        }
-
-        // If the web app returned an array of rows (sheet rows)
-        if(Array.isArray(data)) {
-          // Map sheet rows to dashboard invoices. Adjust these keys to match your sheet headers.
-          // Expected sheet headers per screenshot:
-          // ID, Timestamp, Name of Applicant, Telephone, Email, Booking Type,
-          // Name of Institution/Organization/Person, Number of Participants, Venue,
-          // Event Description, Event Start Date, Event End Date, Number of Days (Optional),
-          // Additional Services, Time Event Starts (Please indicate : AM/PM).,
-          // Time Event Ends (Please indicate : AM/PM), For Refreshment (Optional), Payment Status, Status, Recipient Name (For Invoice), Recipient Email (For Invoice)
-
-          // Normalize rows -> invoices
-          invoices = data.map((row, idx) => {
-            // handle different header possible names safely
-            const get = k => row[k] !== undefined ? row[k] : (row[k.toLowerCase()] !== undefined ? row[k.toLowerCase()] : '');
-            return {
-              id: row['ID'] || row['Id'] || row['id'] || ('row-' + (idx+1)),
-              invoiceNo: row['ID'] || row['Timestamp'] || ('INV-' + (idx+1)),
-              institutionId: null,
-              institution: row['Name of Institution/Organization/Person'] || row['Name of Applicant'] || '',
-              coordinator: row['Name of Applicant'] || '',
-              coordinatorEmail: row['Email'] || row['Recipient Email (For Invoice)'] || '',
-              venue: row['Venue'] || '',
-              amount: Number(row['Amount'] || row['Total'] || 0) || 0,
-              date: row['Event Start Date'] || row['Timestamp'] || '',
-              status: row['Status'] || row['Payment Status'] || ''
-            };
-          });
-
-          // Build venues list from unique venue names
-          const venueNames = Array.from(new Set(invoices.map(i=>i.venue).filter(Boolean)));
-          venues = venueNames.map((vn, i) => {
-            // try to keep previous pricing if exists
-            const prev = (JSON.parse(localStorage.getItem('gtec_venues')) || []).find(v=>v.name===vn) || {};
-            return { id: prev.id || Date.now() + i, name: vn, base: prev.base || 0, withServices: prev.withServices || prev.base || 0 };
-          });
-
-          // Build institutions list from unique institutions
-          const instNames = Array.from(new Set(invoices.map(i=>i.institution).filter(Boolean)));
-          institutions = instNames.map((name, i) => {
-            const prev = (JSON.parse(localStorage.getItem('gtec_institutions')) || []).find(it=>it.name===name) || {};
-            return { id: prev.id || Date.now() + i, name, coordinator: prev.coordinator || '', email: prev.email || '' };
-          });
-
-          // (users remain as before unless you want users sourced as well)
-        }
-
-        // After mapping, update UI
-        updateUI();
-
-      } catch (err) {
-        console.error('Error fetching sheet data:', err);
-      }
     }
 
     /*******************************
@@ -473,11 +418,11 @@
       const q = this.value.toLowerCase();
       if(!q){ updateUI(); return; }
       // filter invoices table
-      const tbody = qs('#invoicesTable tbody'); if(!tbody) return; tbody.innerHTML = '';
-      invoices.filter(inv=> [inv.invoiceNo,inv.venue,inv.status,(inv.institution||''), (inv.coordinator||'')].join(' ').toLowerCase().includes(q)).forEach(inv=>{
+      const tbody = qs('#invoicesTable tbody'); tbody.innerHTML = '';
+      invoices.filter(inv=> [inv.invoiceNo,inv.venue,inv.status,(inv.institution||'')].join(' ').toLowerCase().includes(q)).forEach(inv=>{
         const inst = institutions.find(i=>i.id===inv.institutionId) || {name:inv.institution};
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${inv.invoiceNo}</td><td>${inst.name||inv.institution||inv.coordinator}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.date}</td><td>${inv.status}</td><td><button class='btn ghost previewInv' data-id='${inv.id}'>Preview</button> <button class='btn' data-id='${inv.id}' data-action='download'>PDF</button></td>`;
+        tr.innerHTML = `<td>${inv.invoiceNo}</td><td>${inst.name||inv.institution}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.date}</td><td>${inv.status}</td><td><button class='btn ghost previewInv' data-id='${inv.id}'>Preview</button> <button class='btn' data-id='${inv.id}' data-action='download'>PDF</button></td>`;
         tbody.appendChild(tr);
       });
     });
@@ -673,14 +618,39 @@
     });
 
     /*******************************
+     * Live stats fetch from Google Apps Script Web App
+     *******************************/
+    const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzXyA69pX8nMGJjpVm-XFo4Vbk-w0CSBeN6-Y0uQQtEKKoZatbV8KisJLqMcKtyeZx4/exec";
+
+    async function fetchLiveStats(){
+      try {
+        const res = await fetch(LIVE_STATS_URL, {cache: "no-store"});
+        if(!res.ok){
+          console.warn("Live stats fetch failed:", res.status);
+          return;
+        }
+        const data = await res.json();
+        // expected structure: {"Pending":10,"Cancelled":4,"Completed":16}
+        if(typeof data === 'object' && data !== null){
+          if(data.Pending !== undefined) qs('#dashPending').textContent = data.Pending;
+          if(data.Cancelled !== undefined) qs('#dashCancelled').textContent = data.Cancelled;
+          if(data.Completed !== undefined) qs('#dashCompleted').textContent = data.Completed;
+          // keep a small mirror for reportPending too (optional)
+          if(data.Pending !== undefined) qs('#reportPending').textContent = data.Pending;
+        }
+      } catch (err){
+        console.error("Error fetching live stats:", err);
+      }
+    }
+
+    /*******************************
      * Init
      *******************************/
     document.addEventListener('DOMContentLoaded', ()=>{
-      // Fetch live data immediately and periodically
-      fetchData();
-      setInterval(fetchData, 30000); // 30s refresh
-      updateUI(); // initial render with fallback data
-      showPage('dashboard');
+      updateUI(); showPage('dashboard');
+      // fetch live stats immediately and then every 30s
+      fetchLiveStats();
+      setInterval(fetchLiveStats, 30000);
     });
 
   </script>
