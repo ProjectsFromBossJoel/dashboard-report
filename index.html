@@ -445,18 +445,38 @@
       renderInstitutions(); renderVenues(); renderUsers(); renderInvoices(); updateStats(); renderChart();
     }
 
-    /*******************************
-     * Charts
-     *******************************/
-    let venueChart = null;
+    
     function renderChart(){
-      const ctx = document.getElementById('venueChart').getContext('2d');
-      const labels = venues.map(v=>v.name);
-      const sums = venues.map(v=>invoices.filter(inv=>inv.venue===v.name).reduce((s,i)=>s+(i.amount||0),0));
-      if(venueChart) venueChart.destroy();
-      venueChart = new Chart(ctx,{type:'bar',data:{labels, datasets:[{label:'Revenue by Venue', data:sums, tension:0.3}]}, options:{plugins:{legend:{display:false}}}});
-    }
+  const ctx = document.getElementById('venueChart').getContext('2d');
+  const labels = venues.map(v => v.name);
+  
+  // Count bookings per venue instead of summing amounts
+  const counts = venues.map(v => invoices.filter(inv => inv.venue === v.name).length);
 
+  if(venueChart) venueChart.destroy();
+  venueChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Bookings by Venue',
+        data: counts,
+        backgroundColor: 'rgba(37, 99, 235, 0.7)',
+        borderColor: 'rgba(37, 99, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, precision:0 }
+      }
+    }
+  });
+}
+
+
+    
     /*******************************
      * Interactions: Nav + buttons
      *******************************/
@@ -789,6 +809,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
