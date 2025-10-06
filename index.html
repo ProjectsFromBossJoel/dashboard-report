@@ -275,6 +275,54 @@
   <!-- MODALS (hidden) -->
   <div id="modalRoot"></div>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+<script>
+  const sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLDl2oNe9mONdejXYfXqk3hjdVZUWHsfdN47F54BS4nyufgxV_o2VaCm-upReu1ERhZZQ173TfDJ3B/pub?gid=2055986518&single=true&output=csv";
+
+  function loadInstitutions() {
+    Papa.parse(sheetCSVUrl, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        const data = results.data;
+        const tbody = document.querySelector("#institutionsTable tbody");
+        tbody.innerHTML = ""; // Clear previous data
+
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row["Timestamp"] || ""}</td>
+            <td>${row["Name of Applicant"] || ""}</td>
+            <td>${row["Booking Type"] || ""}</td>
+            <td>${row["Name of Institution/Organization/Person"] || ""}</td>
+            <td>${row["Number of Participants"] || ""}</td>
+            <td>${row["Venue"] || ""}</td>
+            <td>${row["Event Description"] || ""}</td>
+            <td>${row["Event Start Date"] || ""}</td>
+            <td>${row["Event End Date"] || ""}</td>
+            <td>${row["Number of Days (Optional)"] || ""}</td>
+            <td>${row["Additional Services"] || ""}</td>
+            <td>${row["Time Event Starts (Please indicate : AM/PM)."] || ""}</td>
+            <td>${row["Time Event Ends (Please indicate : AM/PM)"] || ""}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      },
+      error: function(error) {
+        console.error("Error loading CSV data:", error);
+      }
+    });
+  }
+
+  // Load institutions on page load
+  document.addEventListener("DOMContentLoaded", loadInstitutions);
+</script>
+
+  
+
   <script>
     /*******************************
      * Demo data + persistence
@@ -690,6 +738,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
