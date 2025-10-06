@@ -192,14 +192,12 @@
     <tr>
       <th>Timestamp</th>
       <th>Name of Applicant</th>
-      <th>Booking Type</th>
       <th>Name of Institution/Organization/Person</th>
       <th>Number of Participants</th>
       <th>Venue</th>
       <th>Event Description</th>
       <th>Event Start Date</th>
       <th>Event End Date</th>
-      <th>Number of Days (Optional)</th>
       <th>Additional Services</th>
       <th>Time Event Starts (AM/PM)</th>
       <th>Time Event Ends (AM/PM)</th>
@@ -296,14 +294,12 @@
           tr.innerHTML = `
             <td>${row["Timestamp"] || ""}</td>
             <td>${row["Name of Applicant"] || ""}</td>
-            <td>${row["Booking Type"] || ""}</td>
             <td>${row["Name of Institution/Organization/Person"] || ""}</td>
             <td>${row["Number of Participants"] || ""}</td>
             <td>${row["Venue"] || ""}</td>
             <td>${row["Event Description"] || ""}</td>
             <td>${row["Event Start Date"] || ""}</td>
             <td>${row["Event End Date"] || ""}</td>
-            <td>${row["Number of Days (Optional)"] || ""}</td>
             <td>${row["Additional Services"] || ""}</td>
             <td>${row["Time Event Starts (Please indicate : AM/PM)."] || ""}</td>
             <td>${row["Time Event Ends (Please indicate : AM/PM)"] || ""}</td>
@@ -738,6 +734,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
