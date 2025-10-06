@@ -96,7 +96,10 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <div class="brand"><div class="logo">G</div><div><h1>GTEC Conference</h1><div class="small muted">Facility Management</div></div></div>
+      <div class="brand">
+  <img src="logo1.jpg" alt="GTEC Logo" class="logo" style="height:50px; width:auto;">
+</div>
+<div><h1>GTEC Conference</h1><div class="small muted">Facility Management</div></div></div>
 
       <div class="nav" role="navigation">
         <button class="active" data-page="dashboard">🏠 Dashboard</button>
@@ -480,18 +483,70 @@
     });
 
     // global search
-    qs('#globalSearch').addEventListener('input', function(){
-      const q = this.value.toLowerCase();
-      if(!q){ updateUI(); return; }
-      // filter invoices table
-      const tbody = qs('#invoicesTable tbody'); tbody.innerHTML = '';
-      invoices.filter(inv=> [inv.invoiceNo,inv.venue,inv.status,(inv.institution||'')].join(' ').toLowerCase().includes(q)).forEach(inv=>{
-        const inst = institutions.find(i=>i.id===inv.institutionId) || {name:inv.institution};
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${inv.invoiceNo}</td><td>${inst.name||inv.institution}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.date}</td><td>${inv.status}</td><td><button class='btn ghost previewInv' data-id='${inv.id}'>Preview</button> <button class='btn' data-id='${inv.id}' data-action='download'>PDF</button></td>`;
-        tbody.appendChild(tr);
-      });
+qs('#globalSearch').addEventListener('input', function(){
+  const q = this.value.toLowerCase();
+
+  // --- FILTER INSTITUTIONS ---
+  const instTbody = qs('#institutionsTable tbody');
+  instTbody.innerHTML = ''; // clear table
+  if(q){
+    Papa.parse(sheetCSVUrl, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        const data = results.data;
+        data.forEach(row => {
+          const combined = [
+            row["Timestamp"] || "",
+            row["Name of Applicant"] || "",
+            row["Name of Institution/Organization/Person"] || "",
+            row["Number of Participants"] || "",
+            row["Venue"] || "",
+            row["Event Description"] || "",
+            row["Event Start Date"] || "",
+            row["Event End Date"] || "",
+            row["Additional Services"] || "",
+            row["Time Event Starts (Please indicate : AM/PM)."] || "",
+            row["Time Event Ends (Please indicate : AM/PM)"] || ""
+          ].join(' ').toLowerCase();
+          
+          if(combined.includes(q)){
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${row["Timestamp"] || ""}</td>
+              <td>${row["Name of Applicant"] || ""}</td>
+              <td>${row["Name of Institution/Organization/Person"] || ""}</td>
+              <td>${row["Number of Participants"] || ""}</td>
+              <td>${row["Venue"] || ""}</td>
+              <td>${row["Event Description"] || ""}</td>
+              <td>${row["Event Start Date"] || ""}</td>
+              <td>${row["Event End Date"] || ""}</td>
+              <td>${row["Additional Services"] || ""}</td>
+              <td>${row["Time Event Starts (Please indicate : AM/PM)."] || ""}</td>
+              <td>${row["Time Event Ends (Please indicate : AM/PM)"] || ""}</td>
+            `;
+            instTbody.appendChild(tr);
+          }
+        });
+      }
     });
+  } else {
+    // reload all institutions if search is empty
+    loadInstitutions();
+  }
+
+  // --- FILTER INVOICES ---
+  const tbody = qs('#invoicesTable tbody'); tbody.innerHTML = '';
+  invoices.filter(inv=> [inv.invoiceNo,inv.venue,inv.status,(inv.institution||'')].join(' ').toLowerCase().includes(q)).forEach(inv=>{
+    const inst = institutions.find(i=>i.id===inv.institutionId) || {name:inv.institution};
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${inv.invoiceNo}</td><td>${inst.name||inv.institution}</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td><td>${inv.date}</td><td>${inv.status}</td><td><button class='btn ghost previewInv' data-id='${inv.id}'>Preview</button> <button class='btn' data-id='${inv.id}' data-action='download'>PDF</button></td>`;
+    tbody.appendChild(tr);
+  });
+});
+
+    
 
     /*******************************
      * Modal helpers (simple)
@@ -735,6 +790,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
