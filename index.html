@@ -446,14 +446,23 @@
     }
 
     
-    function renderChart(){
+    /*******************************
+ * Charts
+ *******************************/
+let venueChart = null;
+function renderChart(){
   const ctx = document.getElementById('venueChart').getContext('2d');
+  
+  // Labels: venue names
   const labels = venues.map(v => v.name);
   
-  // Count bookings per venue instead of summing amounts
+  // Count bookings per venue
   const counts = venues.map(v => invoices.filter(inv => inv.venue === v.name).length);
-
+  
+  // Destroy existing chart if any
   if(venueChart) venueChart.destroy();
+  
+  // Create new chart
   venueChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -463,17 +472,17 @@
         data: counts,
         backgroundColor: 'rgba(37, 99, 235, 0.7)',
         borderColor: 'rgba(37, 99, 235, 1)',
-        borderWidth: 1
+        borderWidth: 1,
+        tension: 0.3
       }]
     },
     options: {
       plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, precision:0 }
-      }
+      scales: { y: { beginAtZero: true, precision: 0 } }
     }
   });
 }
+
 
 
     
@@ -809,6 +818,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
