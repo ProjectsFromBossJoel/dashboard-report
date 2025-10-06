@@ -187,7 +187,27 @@
           <div><button class="btn ghost" id="btnImportCSV">Import CSV</button> <button class="btn" id="btnAddInstitution">+ Add Institution</button></div>
         </div>
         <div class="card">
-          <table class="table" id="institutionsTable"><thead><tr><th>Name</th><th>Coordinator</th><th>Email</th><th>Bookings</th><th>Action</th></tr></thead><tbody></tbody></table>
+          <table class="table" id="institutionsTable">
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Name of Applicant</th>
+      <th>Booking Type</th>
+      <th>Institution/Organization</th>
+      <th>Number of Participants</th>
+      <th>Venue</th>
+      <th>Event Description</th>
+      <th>Event Start Date</th>
+      <th>Event End Date</th>
+      <th>Number of Days</th>
+      <th>Additional Services</th>
+      <th>Time Start</th>
+      <th>Time End</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
         </div>
       </section>
 
@@ -669,5 +689,6 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
