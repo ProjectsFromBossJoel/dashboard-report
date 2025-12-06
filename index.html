@@ -15,6 +15,18 @@
   .login-box {
     position:relative; width:350px; padding:40px; background:rgba(255,255,255,0.1);
     backdrop-filter:blur(10px); border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.2); text-align:center;
+    transition: transform 0.2s;
+  }
+  .login-box.shake {
+    animation: shake 0.3s;
+  }
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-10px); }
+    80% { transform: translateX(10px); }
+    100% { transform: translateX(0); }
   }
   .login-box h2 { margin-bottom:20px; font-weight:600; font-size:26px; }
   .input-group { margin-top:15px; text-align:left; position:relative; }
@@ -46,7 +58,7 @@
 </head>
 <body>
 
-<div class="login-box">
+<div class="login-box" id="loginBox">
   <h2>Welcome Back</h2>
 
   <div class="input-group">
@@ -67,7 +79,7 @@
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbwIQ30msaS39Y0ntzTYURgEs7P-l7L8VYOmqZ2gDG04eQiHlOPkqKThJU5tGQLH7CsH/exec"; // Replace with your Apps Script Web App URL
+const scriptURL = "https://script.google.com/macros/s/AKfycbwIQ30msaS39Y0ntzTYURgEs7P-l7L8VYOmqZ2gDG04eQiHlOPkqKThJU5tGQLH7CsH/exec"; // Apps Script Web App URL
 const dashboardURL = "https://projectsfrombossjoel.github.io/dashboard-report/dashboard";
 
 const loginBtn = document.getElementById("loginBtn");
@@ -76,6 +88,7 @@ const passwordInput = document.getElementById("password");
 const errorMsg = document.getElementById("errorMsg");
 const successMsg = document.getElementById("successMsg");
 const togglePassword = document.getElementById("togglePassword");
+const loginBox = document.getElementById("loginBox");
 
 // Toggle password visibility
 togglePassword.addEventListener("click", () => {
@@ -88,6 +101,12 @@ togglePassword.addEventListener("click", () => {
   }
 });
 
+// Shake animation for error
+function shakeLoginBox() {
+  loginBox.classList.add("shake");
+  setTimeout(() => loginBox.classList.remove("shake"), 300);
+}
+
 // Login function
 async function login() {
   const username = usernameInput.value.trim();
@@ -97,6 +116,7 @@ async function login() {
   if (!username || !password) {
     errorMsg.textContent = "Please fill in both fields.";
     errorMsg.style.display = "block";
+    shakeLoginBox();
     return;
   }
 
@@ -112,7 +132,6 @@ async function login() {
     const data = JSON.parse(text);
 
     if (data.success) {
-      // Show success message animation
       successMsg.style.display = "block";
       setTimeout(() => {
         window.location.href = dashboardURL;
@@ -120,11 +139,13 @@ async function login() {
     } else {
       errorMsg.textContent = "Invalid username or password.";
       errorMsg.style.display = "block";
+      shakeLoginBox();
     }
 
   } catch (err) {
     errorMsg.textContent = "Login failed. Please try again later.";
     errorMsg.style.display = "block";
+    shakeLoginBox();
     console.error(err);
   }
 }
