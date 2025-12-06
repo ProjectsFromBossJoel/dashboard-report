@@ -145,35 +145,47 @@
 
   
         <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbwlGUmBUKp-HQPH28JRRv2Xb-rF_ns8hbEuxJo1xm_WTTd8Nt6rqgx7454-_6b8qInRqw/exec";    // Apps Script URL
-const dashboardURL = "https://projectsfrombossjoel.github.io/dashboard-report/dashboard";  // Dashboard URL
+const scriptURL = "https://script.google.com/macros/s/AKfycbwlGUmBUKp-HQPH28JRRv2Xb-rF_ns8hbEuxJo1xm_WTTd8Nt6rqgx7454-_6b8qInRqw/exec"; 
+const dashboardURL = "https://projectsfrombossjoel.github.io/dashboard-report/dashboard";
 
-async function loginUser(event) {
-  event.preventDefault();
-
+async function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
+  const errorMsg = document.getElementById("errorMsg");
 
-  const res = await fetch(scriptURL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  });
+  if (!username || !password) {
+    errorMsg.textContent = "Please fill in both fields.";
+    errorMsg.style.display = "block";
+    return;
+  }
 
-  const data = await res.json();
+  try {
+    const res = await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
 
-  if (data.success) {
-    // SUCCESS → Redirect to dashboard
-    window.location.href = dashboardURL;
-  } else {
-    // FAILED → Show message
-    document.getElementById("error").textContent = "Invalid username or password.";
+    const data = await res.json();
+
+    if (data.success) {
+      window.location.href = dashboardURL;
+    } else {
+      errorMsg.textContent = "Invalid username or password.";
+      errorMsg.style.display = "block";
+    }
+  } catch (err) {
+    errorMsg.textContent = "Login failed. Please try again later.";
+    errorMsg.style.display = "block";
+    console.error(err);
   }
 }
 </script>
 
 
+
 </body>
 </html>
+
 
 
