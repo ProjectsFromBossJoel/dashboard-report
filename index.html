@@ -11,9 +11,10 @@
   body {
     height:100vh; display:flex; justify-content:center; align-items:center;
     background:linear-gradient(135deg, #4A00E0, #8E2DE2); color:white; position:relative;
+    padding: 10px;
   }
   .login-box {
-    position:relative; width:350px; padding:40px; background:rgba(255,255,255,0.1);
+    position:relative; width:350px; max-width:90%; padding:40px; background:rgba(255,255,255,0.1);
     backdrop-filter:blur(10px); border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.2); text-align:center;
     transition: transform 0.2s;
   }
@@ -53,6 +54,15 @@
     0% { opacity:1; }
     80% { opacity:1; }
     100% { opacity:0; transform:translate(-50%, -60px); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 400px) {
+    .login-box { padding:30px; }
+    .login-box h2 { font-size:22px; }
+    .input-group input { padding:10px; font-size:14px; }
+    button { padding:10px; font-size:15px; }
+    .toggle-password { top:34px; font-size:13px; }
   }
 </style>
 </head>
