@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+      position: relative;
+      overflow: hidden;
+      color: white;
+    }
+
+    /* Wave Background Effects */
+    .wave {
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      background: rgba(255, 255, 255, 0.1);
+      top: -10%;
+      left: -10%;
+      border-radius: 45%;
+      animation: wave 9s infinite linear;
+    }
+
+    .wave:nth-child(2) {
+      animation-duration: 12s;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .wave:nth-child(3) {
+      animation-duration: 15s;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    @keyframes wave {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Login Box */
+    .login-box {
+      position: relative;
+      width: 350px;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      z-index: 10;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 26px;
+    }
+
+    .input-group {
+      margin-top: 15px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      margin-top: 5px;
+      background: white;
+      font-size: 15px;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #4A00E0;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #e6e6e6;
+    }
+
+    .error {
+      margin-top: 12px;
+      color: #ffaaaa;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wave"></div>
+  <div class="wave"></div>
+  <div class="wave"></div>
+
+  <div class="login-box">
+    <h2>Welcome Back</h2>
+
+    <div class="input-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter username" />
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter password" />
+    </div>
+
+    <button onclick="login()">Log In</button>
+
+    <p class="error" id="errorMsg">Invalid username or password</p>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+
+      fetch("https://script.google.com/macros/s/AKfycbwlGUmBUKp-HQPH28JRRv2Xb-rF_ns8hbEuxJo1xm_WTTd8Nt6rqgx7454-_6b8qInRqw/exec", {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: user, password: pass })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = "dashboard.html";
+        } else {
+          document.getElementById("errorMsg").style.display = "block";
+        }
+      })
+      .catch(err => {
+        document.getElementById("errorMsg").style.display = "block";
+      });
+    }
+  </script>
+
+</body>
+</html>
