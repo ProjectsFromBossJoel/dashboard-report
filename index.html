@@ -4,167 +4,81 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Login</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
   body {
-    height:100vh; display:flex; justify-content:center; align-items:center;
-    background:linear-gradient(135deg, #4A00E0, #8E2DE2); color:white; position:relative;
-    padding: 10px;
+    font-family: Poppins, sans-serif;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+    color: white;
   }
-  .login-box {
-    position:relative; width:350px; max-width:90%; padding:40px; background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(10px); border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.2); text-align:center;
-    transition: transform 0.2s;
+  .box {
+    width: 350px; background: rgba(255,255,255,0.1);
+    padding: 30px; border-radius: 12px; text-align: center;
+    backdrop-filter: blur(10px);
   }
-  .login-box.shake {
-    animation: shake 0.3s;
-  }
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-10px); }
-    40% { transform: translateX(10px); }
-    60% { transform: translateX(-10px); }
-    80% { transform: translateX(10px); }
-    100% { transform: translateX(0); }
-  }
-  .login-box h2 { margin-bottom:20px; font-weight:600; font-size:26px; }
-  .input-group { margin-top:15px; text-align:left; position:relative; }
-  .input-group label { font-size:14px; font-weight:400; }
-  .input-group input {
-    width:100%; padding:12px; border:none; border-radius:8px; margin-top:5px; outline:none; font-size:15px; background:white;
-  }
-  .toggle-password {
-    position:absolute; right:12px; top:38px; cursor:pointer; font-size:14px; color:#4A00E0;
-    user-select:none;
+  input {
+    margin-top: 10px; width: 100%; padding: 12px;
+    border: none; border-radius: 8px; outline: none;
   }
   button {
-    margin-top:25px; width:100%; padding:12px; border:none; border-radius:8px;
-    background:#ffffff; color:#4A00E0; font-weight:600; font-size:16px; cursor:pointer; transition:0.3s;
+    margin-top: 20px; width: 100%; padding: 12px;
+    border: none; border-radius: 8px;
+    background: white; color: #4A00E0; font-weight: 600;
+    cursor: pointer;
   }
-  button:hover { background:#e6e6e6; }
-  .error { margin-top:12px; color:#ffaaaa; font-size:14px; display:none; }
-  .success-msg {
-    position:absolute; top:-40px; left:50%; transform:translateX(-50%);
-    background:#00FF7F; color:#000; padding:8px 16px; border-radius:8px;
-    font-weight:600; display:none; animation:fadeOut 2s forwards;
-  }
-  @keyframes fadeOut {
-    0% { opacity:1; }
-    80% { opacity:1; }
-    100% { opacity:0; transform:translate(-50%, -60px); }
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 400px) {
-    .login-box { padding:30px; }
-    .login-box h2 { font-size:22px; }
-    .input-group input { padding:10px; font-size:14px; }
-    button { padding:10px; font-size:15px; }
-    .toggle-password { top:34px; font-size:13px; }
-  }
+  .error { color: #ffaaaa; margin-top: 10px; }
 </style>
 </head>
 <body>
 
-<div class="login-box" id="loginBox">
-  <h2>Welcome Back</h2>
+<div class="box">
+  <h2>Login</h2>
+  
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Password" />
 
-  <div class="input-group">
-    <label>Username</label>
-    <input type="text" id="username" placeholder="Enter username" />
-  </div>
+  <button onclick="login()">Login</button>
 
-  <div class="input-group">
-    <label>Password</label>
-    <input type="password" id="password" placeholder="Enter password" />
-    <span class="toggle-password" id="togglePassword">Show</span>
-  </div>
+  <p id="errorMsg" class="error"></p>
 
-  <button id="loginBtn">Log In</button>
-
-  <p class="error" id="errorMsg">Invalid username or password</p>
-  <div class="success-msg" id="successMsg">Login Successful!</div>
+  <p style="margin-top:15px;">
+    No account? <a href="signup.html" style="color:white;">Sign Up</a>
+  </p>
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbwIQ30msaS39Y0ntzTYURgEs7P-l7L8VYOmqZ2gDG04eQiHlOPkqKThJU5tGQLH7CsH/exec"; // Apps Script Web App URL
-const dashboardURL = "https://projectsfrombossjoel.github.io/dashboard-report/dashboard";
+  // Your Firebase Config
+  const firebaseConfig = {
+  apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
+  authDomain: "userlogin-44d0a.firebaseapp.com",
+  projectId: "userlogin-44d0a",
+  storageBucket: "userlogin-44d0a.firebasestorage.app",
+  messagingSenderId: "47108256134",
+  appId: "1:47108256134:web:60888fa5f06dfb075d3c07",
+  measurementId: "G-ZCVWTTFT2H"
+};
 
-const loginBtn = document.getElementById("loginBtn");
-const usernameInput = document.getElementById("username");
-const passwordInput = document.getElementById("password");
-const errorMsg = document.getElementById("errorMsg");
-const successMsg = document.getElementById("successMsg");
-const togglePassword = document.getElementById("togglePassword");
-const loginBox = document.getElementById("loginBox");
+  firebase.initializeApp(firebaseConfig);
 
-// Toggle password visibility
-togglePassword.addEventListener("click", () => {
-  if (passwordInput.type === "password") {
-    passwordInput.type = "text";
-    togglePassword.textContent = "Hide";
-  } else {
-    passwordInput.type = "password";
-    togglePassword.textContent = "Show";
+  // LOGIN FUNCTION
+  function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(() => {
+        window.location.href = "dashboard.html";
+      })
+      .catch((err) => {
+        document.getElementById("errorMsg").textContent = err.message;
+      });
   }
-});
-
-// Shake animation for error
-function shakeLoginBox() {
-  loginBox.classList.add("shake");
-  setTimeout(() => loginBox.classList.remove("shake"), 300);
-}
-
-// Login function
-async function login() {
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
-  errorMsg.style.display = "none";
-
-  if (!username || !password) {
-    errorMsg.textContent = "Please fill in both fields.";
-    errorMsg.style.display = "block";
-    shakeLoginBox();
-    return;
-  }
-
-  try {
-    const res = await fetch(scriptURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-
-    const text = await res.text();
-    console.log("Server Response:", text);
-    const data = JSON.parse(text);
-
-    if (data.success) {
-      successMsg.style.display = "block";
-      setTimeout(() => {
-        window.location.href = dashboardURL;
-      }, 1500);
-    } else {
-      errorMsg.textContent = "Invalid username or password.";
-      errorMsg.style.display = "block";
-      shakeLoginBox();
-    }
-
-  } catch (err) {
-    errorMsg.textContent = "Login failed. Please try again later.";
-    errorMsg.style.display = "block";
-    shakeLoginBox();
-    console.error(err);
-  }
-}
-
-// Click button or press Enter key
-loginBtn.addEventListener("click", login);
-document.addEventListener("keydown", function(e){
-  if(e.key === "Enter") login();
-});
 </script>
 
 </body>
