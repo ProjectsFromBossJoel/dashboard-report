@@ -300,7 +300,6 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 function logout() {
-  document.getElementById("logoutBtn").onclick = () => {
   firebase.auth().signOut().then(() => {
     window.location.href = "index.html";
   });
@@ -866,6 +865,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
