@@ -97,15 +97,6 @@
 <body>
   <div class="app">
 
-    <script>
-  firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-      // User is NOT logged in → send to login page
-      window.location.href = "index.html";
-    }
-  });
-</script>
-
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -875,6 +866,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
