@@ -122,9 +122,19 @@
     .login-box { padding:30px; }
     h2 { font-size:22px; }
   }
+
+.logo {
+  width: 120px;           /* Adjust the size */
+  height: auto;           /* Keep aspect ratio */
+  border-radius: 15px;    /* Make edges rounded (increase for more roundness) */
+  cursor: pointer;        /* Optional: pointer on hover */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+ 
 </style>
 </head>
 <body>
+ <img src="logo1.jpg" alt="Logo" class="logo">
 
 <div class="login-box" id="loginBox">
   <h2>GTEC Conference Facility</h2>
@@ -209,5 +219,6 @@ document.addEventListener("keydown", function(e){
 
 </body>
 </html>
+
 
 
