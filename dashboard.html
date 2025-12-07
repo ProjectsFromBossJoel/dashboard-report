@@ -97,6 +97,16 @@
 <body>
   <div class="app">
 
+    <script>
+  firebase.auth().onAuthStateChanged((user) => {
+    if (!user) {
+      // User is NOT logged in → send to login page
+      window.location.href = "index.html";
+    }
+  });
+</script>
+
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="brand">
@@ -299,12 +309,15 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 function logout() {
+  document.getElementById("logoutBtn").onclick = () => {
   firebase.auth().signOut().then(() => {
     window.location.href = "index.html";
   });
 }
+
 </script>
 
+  
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
@@ -862,6 +875,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
