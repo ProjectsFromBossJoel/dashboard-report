@@ -5,9 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up</title>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    // Initialize Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    //Firebase Configuration
+    const firebaseConfig = {
+  apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
+  authDomain: "userlogin-44d0a.firebaseapp.com",
+  projectId: "userlogin-44d0a",
+  storageBucket: "userlogin-44d0a.firebasestorage.app",
+  messagingSenderId: "47108256134",
+  appId: "1:47108256134:web:60888fa5f06dfb075d3c07",
+  measurementId: "G-ZCVWTTFT2H"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.firebaseAuth = auth; // Expose auth globally for signup script
+  </script>
 
   <style>
     * {
@@ -17,7 +36,6 @@
       font-family: "Poppins", sans-serif;
     }
 
-    /* Background Image Blur */
     body {
       height: 100vh;
       display: flex;
@@ -140,7 +158,6 @@
       100% { transform: translateX(0); }
     }
 
-    /* Loading Popup */
     #loadingPopup {
       position: fixed;
       top: 0;
@@ -206,36 +223,38 @@
     <input type="password" id="password">
   </div>
 
-  
   <button id="signupBtn">Signup</button>
-
 
   <p>Already have an account? <a href="index.html">Login</a></p>
 
   <div class="error" id="errorMsg"></div>
 </div>
 
-
 <script type="module">
-import { 
-    auth, 
-    createUserWithEmailAndPassword,
-    sendEmailVerification
-} from "./firebase.js";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+const auth = window.firebaseAuth;
+
+const signupBtn = document.getElementById("signupBtn");
+const errorMsg = document.getElementById("errorMsg");
+const loader = document.getElementById("loadingPopup");
 
 function showLoader() {
-    document.getElementById("loadingOverlay").style.display = "flex";
+    loader.style.display = "flex";
 }
 function hideLoader() {
-    document.getElementById("loadingOverlay").style.display = "none";
+    loader.style.display = "none";
 }
 
-document.getElementById("signupBtn").addEventListener("click", () => {
+signupBtn.addEventListener("click", () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
+    errorMsg.textContent = "";
 
     if (!email || !password) {
-        alert("Fill all fields");
+        errorMsg.textContent = "Please fill in all fields.";
+        document.getElementById("signupBox").classList.add("shake");
+        setTimeout(() => document.getElementById("signupBox").classList.remove("shake"), 300);
         return;
     }
 
@@ -247,16 +266,21 @@ document.getElementById("signupBtn").addEventListener("click", () => {
         .then(() => {
             hideLoader();
             alert("Verification email sent. Please check your inbox.");
-            window.location.href = "login.html";
+            window.location.href = "index.html";
+        })
+        .catch((err) => {
+            hideLoader();
+            errorMsg.textContent = "Error sending verification email: " + err.message;
         });
     })
     .catch((error) => {
         hideLoader();
-        alert(error.message);
+        errorMsg.textContent = error.message;
+        document.getElementById("signupBox").classList.add("shake");
+        setTimeout(() => document.getElementById("signupBox").classList.remove("shake"), 300);
     });
 });
 </script>
-
 
 </body>
 </html>
