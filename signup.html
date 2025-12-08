@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up</title>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+
   <style>
     * {
       margin: 0;
@@ -13,24 +17,26 @@
       font-family: "Poppins", sans-serif;
     }
 
+    /* Background Image Blur */
     body {
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-image: url("GTEC Conference Facility_(Front View).jpg");
-      background-size: cover;
-      background-position: center;
-      backdrop-filter: blur(5px);
+      background: url("GTEC Conference Facility_(Front View).jpg") no-repeat center center/cover;
+      position: relative;
     }
 
-    .overlay {
-      position: fixed;
+    body::after {
+      content: "";
+      position: absolute;
       top: 0;
       left: 0;
-      height: 100%;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.45);
+      right: 0;
+      bottom: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.45);
+      z-index: 0;
     }
 
     .container {
@@ -38,33 +44,35 @@
       z-index: 10;
       width: 350px;
       padding: 30px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,0.15);
       border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      color: #fff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      color: white;
+      text-align: center;
     }
 
     h2 {
-      text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       font-size: 23px;
       font-weight: 700;
     }
 
     h1 {
-      text-align: center;
       margin-bottom: 20px;
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 600;
+      color: #ffdd99;
     }
 
     .input-group {
       margin-bottom: 15px;
+      text-align: left;
     }
 
     .input-group label {
-      display: block;
       font-size: 14px;
+      display: block;
       margin-bottom: 5px;
     }
 
@@ -74,53 +82,117 @@
       border: none;
       outline: none;
       border-radius: 8px;
+      background: white;
+      font-size: 15px;
     }
 
     button {
       width: 100%;
       padding: 12px;
       border: none;
-      background: #ff9900;
-      color: #fff;
+      background: white;
+      color: #cc7a00;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 8px;
       cursor: pointer;
       transition: 0.3s;
     }
 
     button:hover {
-      background: #e68a00;
+      background: #f1f1f1;
     }
 
     p {
       margin-top: 15px;
-      text-align: center;
       font-size: 14px;
     }
 
     a {
-      color: #ffdd99;
+      color: #ffd27f;
       text-decoration: none;
       font-weight: 600;
     }
 
+    .error {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ffb0b0;
+      text-align: center;
+    }
+
     .logo {
-  width: 90px;           /* Adjust the size */
-  height: auto;           /* Keep aspect ratio */
-  position: relative;
-  border-radius: 12px;    /* Make edges rounded (increase for more roundness) */
-  cursor: pointer;        /* Optional: pointer on hover */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
-}
+      width: 90px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .container.shake {
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Loading Popup */
+    #loadingPopup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+      z-index: 9000;
+    }
+
+    .popup-box {
+      background: white;
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 4px 13px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .spinner {
+      width: 35px;
+      height: 35px;
+      border: 4px solid #ddd;
+      border-top-color: #ff9900;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
+
 <body>
 
-<div class="overlay"></div>
+<!-- Loading Popup -->
+<div id="loadingPopup">
+  <div class="popup-box">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-size: 16px; color: #333;">Creating Account...</p>
+  </div>
+</div>
 
-<div class="container">
-  <img src="logo1.jpg" alt="Logo" class="logo">
+<div class="container" id="signupBox">
+  <img src="logo1.jpg" class="logo">
+
   <h2>GTEC Conference Facility</h2>
   <h1>Create Account</h1>
 
@@ -134,17 +206,15 @@
     <input type="password" id="password">
   </div>
 
-  <button onclick="signup()">Sign Up</button>
+  <button id="signupBtn">Sign Up</button>
 
   <p>Already have an account? <a href="index.html">Login</a></p>
+
+  <div class="error" id="errorMsg"></div>
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-auth-compat.js"></script>
-
 <script>
-  const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
   authDomain: "userlogin-44d0a.firebaseapp.com",
   projectId: "userlogin-44d0a",
@@ -154,28 +224,47 @@
   measurementId: "G-ZCVWTTFT2H"
 };
 
-  firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
-  function signup() {
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
+const errorMsg = document.getElementById("errorMsg");
+const signupBox = document.getElementById("signupBox");
 
-    if (!email || !pass) {
-      alert("All fields are required!");
-      return;
-    }
+async function signup() {
+  const email = document.getElementById("email").value.trim();
+  const pass = document.getElementById("password").value.trim();
 
-    firebase.auth().createUserWithEmailAndPassword(email, pass)
-      .then(() => {
-        alert("Account created successfully! You can now log in.");
-        window.location.href = "index.html";
-      })
-      .catch(error => {
-        alert(error.message);
-      });
+  errorMsg.textContent = "";
+
+  if (!email || !pass) {
+    errorMsg.textContent = "All fields are required!";
+    signupBox.classList.add("shake");
+    setTimeout(() => signupBox.classList.remove("shake"), 300);
+    return;
   }
+
+  document.getElementById("loadingPopup").style.display = "flex";
+
+  try {
+    await firebase.auth().createUserWithEmailAndPassword(email, pass);
+
+    window.location.href = "index.html";
+
+  } catch (error) {
+    document.getElementById("loadingPopup").style.display = "none";
+
+    errorMsg.textContent = error.message;
+    signupBox.classList.add("shake");
+    setTimeout(() => signupBox.classList.remove("shake"), 300);
+  }
+}
+
+document.getElementById("signupBtn").onclick = signup;
+
+// Enter key triggers signup
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") signup();
+});
 </script>
 
 </body>
 </html>
-
