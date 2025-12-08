@@ -49,7 +49,14 @@
     h2 {
       text-align: center;
       margin-bottom: 20px;
-      font-size: 28px;
+      font-size: 23px;
+      font-weight: 700;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
       font-weight: 700;
     }
 
@@ -99,6 +106,14 @@
       text-decoration: none;
       font-weight: 600;
     }
+
+    .logo {
+  width: 90px;           /* Adjust the size */
+  height: auto;           /* Keep aspect ratio */
+  border-radius: 12px;    /* Make edges rounded (increase for more roundness) */
+  cursor: pointer;        /* Optional: pointer on hover */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
   </style>
 </head>
 <body>
@@ -106,7 +121,9 @@
 <div class="overlay"></div>
 
 <div class="container">
-  <h2>Create Account</h2>
+  <img src="logo1.jpg" alt="Logo" class="logo">
+  <h2>GTEC Conference Facility</h2>
+  <h1>Create Account</h1>
 
   <div class="input-group">
     <label>Email</label>
