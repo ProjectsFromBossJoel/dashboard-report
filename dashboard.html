@@ -10,7 +10,22 @@
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+  <script type="module">
+import { auth, onAuthStateChanged, signOut } from "./firebase.js";
+
+onAuthStateChanged(auth, (user) => {
+    if (!user || !user.emailVerified) {
+        window.location.href = "login.html";
+    }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    signOut(auth).then(() => {
+        window.location.href = "login.html";
+    });
+});
+</script>
+
   <style>
     :root{
       --bg:#f4f7fb; --card:#ffffff; --muted:#6b7280; --primary:#2563eb; --accent:#0ea5a4; --danger:#ef4444;
@@ -120,7 +135,7 @@
         <div class="stat"><div><div class="small muted">Pending</div><div class="val" id="statPending">0</div></div><div class="pill">!</div></div>
       </div>
 
-      <div style="margin-top:12px;font-size:13px;color:var(--muted);">Logged in as <b>Admin</b></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted);">Logged in as <b>User</b></div>
     </aside>
 
     <!-- MAIN -->
@@ -132,7 +147,7 @@
             <button class="btn ghost" id="btnExport">Export CSV</button>
             <button class="btn" id="btnNewBooking">+ New Booking</button>
           </div>
-          <button onclick="logout()">Logout</button>
+          <button id="logoutBtn">Logout</button>
         </div>
         <div class="flex">
           <div style="text-align:right"><div class="muted">Today</div><div style="font-weight:800"> <span id="todayDate"></span></div></div>
@@ -865,6 +880,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
