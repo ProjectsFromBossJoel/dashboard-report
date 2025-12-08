@@ -203,6 +203,7 @@
   <p class="error" id="errorMsg"></p>
 </div>
 
+
 <script>
 /* ---------- YOUR FIREBASE CONFIG ---------- */
 const firebaseConfig = {
@@ -223,7 +224,7 @@ const passwordInput = document.getElementById("password");
 const errorMsg = document.getElementById("errorMsg");
 const loginBox = document.getElementById("loginBox");
 
-/* ---------- Toggle Password ---------- */
+/* ---------- Password Toggle ---------- */
 document.getElementById("togglePassword").onclick = () => {
   if (passwordInput.type === "password") {
     passwordInput.type = "text";
@@ -247,36 +248,37 @@ async function login() {
     return;
   }
 
+  // Show loader
+  document.getElementById("loadingPopup").style.display = "flex";
+
   try {
     await firebase.auth().signInWithEmailAndPassword(email, password);
+
+    // Redirect on success
     window.location.href = "dashboard.html";
-   .catch((error) => {
-      alert(error.message);
-      document.getElementById("loadingPopup").style.display = "none";
-  });
 
   } catch (err) {
+    // Hide loader
+    document.getElementById("loadingPopup").style.display = "none";
+
     errorMsg.textContent = err.message;
     loginBox.classList.add("shake");
     setTimeout(() => loginBox.classList.remove("shake"), 300);
   }
 }
 
+/* ---------- Click Events ---------- */
 document.getElementById("loginBtn").onclick = login;
 
- 
- document.getElementById("loginBtn").addEventListener("click", function() {
-    document.getElementById("loadingPopup").style.display = "flex";
-});
-
-
-document.addEventListener("keydown", function(e){
-  if(e.key === "Enter") login();
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") login();
 });
 </script>
 
+
 </body>
 </html>
+
 
 
 
