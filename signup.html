@@ -1,57 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Sign Up</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
 
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
 
-<style>
-  body { font-family: Poppins, sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; background:#8E2DE2; color:white; }
-  .box { width:350px; padding:30px; background:rgba(255,255,255,0.1); border-radius:12px; }
-  input { margin-top:10px; width:100%; padding:12px; border:none; border-radius:8px; }
-  button { margin-top:20px; width:100%; padding:12px; border:none; background:white; color:#4A00E0; border-radius:8px; }
-  .error { color:#ffaaaa; margin-top:10px; }
-</style>
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url("your-background-image.jpg"); /* your image */
+      background-size: cover;
+      background-position: center;
+      filter: blur(3px);
+    }
 
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(5px);
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 350px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      color: #fff;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      outline: none;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #ff9900;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #e68a00;
+    }
+
+    p {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    a {
+      color: #ffdd99;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
-<div class="box">
+<div class="overlay"></div>
+
+<div class="container">
   <h2>Create Account</h2>
 
-  <input type="email" id="email" placeholder="Enter email">
-  <input type="password" id="password" placeholder="Enter password">
+  <div class="input-group">
+    <label>Email</label>
+    <input type="email" id="email">
+  </div>
+
+  <div class="input-group">
+    <label>Password</label>
+    <input type="password" id="password">
+  </div>
 
   <button onclick="signup()">Sign Up</button>
-  <p id="errorMsg" class="error"></p>
+
+  <p>Already have an account? <a href="login.html">Login</a></p>
 </div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-auth-compat.js"></script>
 
 <script>
   const firebaseConfig = {
-    apiKey: "API_KEY_HERE",
-    authDomain: "PROJECT_ID.firebaseapp.com",
-    projectId: "PROJECT_ID",
-    storageBucket: "PROJECT_ID.appspot.com",
-    messagingSenderId: "ID",
-    appId: "APP_ID"
-  };
+  apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
+  authDomain: "userlogin-44d0a.firebaseapp.com",
+  projectId: "userlogin-44d0a",
+  storageBucket: "userlogin-44d0a.firebasestorage.app",
+  messagingSenderId: "47108256134",
+  appId: "1:47108256134:web:60888fa5f06dfb075d3c07",
+  measurementId: "G-ZCVWTTFT2H"
+};
+
   firebase.initializeApp(firebaseConfig);
 
   function signup() {
     const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const pass = document.getElementById("password").value;
 
-    firebase.auth().createUserWithEmailAndPassword(email, password)
+    if (!email || !pass) {
+      alert("All fields are required!");
+      return;
+    }
+
+    firebase.auth().createUserWithEmailAndPassword(email, pass)
       .then(() => {
-        alert("Account created! You can login now.");
-        window.location.href = "index.html";
+        alert("Account created successfully! You can now log in.");
+        window.location.href = "login.html";
       })
-      .catch(err => {
-        document.getElementById("errorMsg").textContent = err.message;
+      .catch(error => {
+        alert(error.message);
       });
   }
 </script>
 
 </body>
 </html>
+
