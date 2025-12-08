@@ -206,65 +206,57 @@
     <input type="password" id="password">
   </div>
 
-  <button id="signupBtn">Sign Up</button>
+  
+  <button id="signupBtn">Signup</button>
+
 
   <p>Already have an account? <a href="index.html">Login</a></p>
 
   <div class="error" id="errorMsg"></div>
 </div>
 
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
-  authDomain: "userlogin-44d0a.firebaseapp.com",
-  projectId: "userlogin-44d0a",
-  storageBucket: "userlogin-44d0a.firebasestorage.app",
-  messagingSenderId: "47108256134",
-  appId: "1:47108256134:web:60888fa5f06dfb075d3c07",
-  measurementId: "G-ZCVWTTFT2H"
-};
 
-firebase.initializeApp(firebaseConfig);
+<script type="module">
+import { 
+    auth, 
+    createUserWithEmailAndPassword,
+    sendEmailVerification
+} from "./firebase.js";
 
-const errorMsg = document.getElementById("errorMsg");
-const signupBox = document.getElementById("signupBox");
-
-async function signup() {
-  const email = document.getElementById("email").value.trim();
-  const pass = document.getElementById("password").value.trim();
-
-  errorMsg.textContent = "";
-
-  if (!email || !pass) {
-    errorMsg.textContent = "All fields are required!";
-    signupBox.classList.add("shake");
-    setTimeout(() => signupBox.classList.remove("shake"), 300);
-    return;
-  }
-
-  document.getElementById("loadingPopup").style.display = "flex";
-
-  try {
-    await firebase.auth().createUserWithEmailAndPassword(email, pass);
-
-    window.location.href = "index.html";
-
-  } catch (error) {
-    document.getElementById("loadingPopup").style.display = "none";
-
-    errorMsg.textContent = error.message;
-    signupBox.classList.add("shake");
-    setTimeout(() => signupBox.classList.remove("shake"), 300);
-  }
+function showLoader() {
+    document.getElementById("loadingOverlay").style.display = "flex";
+}
+function hideLoader() {
+    document.getElementById("loadingOverlay").style.display = "none";
 }
 
-document.getElementById("signupBtn").onclick = signup;
+document.getElementById("signupBtn").addEventListener("click", () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-// Enter key triggers signup
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") signup();
+    if (!email || !password) {
+        alert("Fill all fields");
+        return;
+    }
+
+    showLoader();
+
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        sendEmailVerification(userCredential.user)
+        .then(() => {
+            hideLoader();
+            alert("Verification email sent. Please check your inbox.");
+            window.location.href = "login.html";
+        });
+    })
+    .catch((error) => {
+        hideLoader();
+        alert(error.message);
+    });
 });
 </script>
+
 
 </body>
 </html>
