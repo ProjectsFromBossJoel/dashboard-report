@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  
   
   <title>GTEC Conference Facility — Admin Dashboard</title>
   <link rel="icon" type="image/png" href="favicon.png">
@@ -193,7 +202,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
           <div class="card stat-card stat-green">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div class="small muted">Completed</div>
-              <div class="label-pill">🟢 Completed</div>
+              <div class="label-pill">🟢Completed</div>
             </div>
             <h2 id="dashCompleted">0</h2>
             <div class="muted">Successfully completed</div>
@@ -299,7 +308,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       
 
           <!-- News Subscription -->
-<section id="news" class="page hidden">
+<section id="news" class="page">
   <div class="card" style="margin-bottom:12px">
     <h3>News Subscription</h3>
     <p class="muted">Emails collected from website newsletter form</p>
@@ -371,52 +380,7 @@ function logout() {
 }
 
 </script>
-  
-
-<script>
-const db = firebase.firestore();
-
-async function loadSubscriptions() {
-  const tbody = document.querySelector("#subscriptionsTable tbody");
-  tbody.innerHTML = "";
-
-  try {
-    const snapshot = await db
-      .collection("subscriptions")
-      .orderBy("createdAt", "desc")
-      .get();
-
-    let index = 1;
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const tr = document.createElement("tr");
-
-      const date = data.createdAt
-        ? data.createdAt.toDate().toLocaleString()
-        : "";
-
-      tr.innerHTML = `
-        <td>${index++}</td>
-        <td>${data.email}</td>
-        <td>${date}</td>
-      `;
-
-      tbody.appendChild(tr);
-    });
-
-  } catch (err) {
-    console.error("Failed to load subscriptions:", err);
-  }
-}
-</script>
-
-  
-  
-
-
-  
-
-  
+   
 
   
 
@@ -990,7 +954,9 @@ qs('#reportPending').textContent = pending;
 
   
   <!-- Fetch email subscription of news letters -->
-  <script>
+<script>
+const db = firebase.firestore();
+
 function loadSubscriptions() {
   const tbody = document.querySelector("#subscriptionsTable tbody");
 
@@ -1014,14 +980,13 @@ function loadSubscriptions() {
         tbody.appendChild(tr);
       });
 
-      // Attach delete handlers
+      // Delete button
       tbody.querySelectorAll(".delete-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
           const docId = btn.dataset.id;
           if (confirm("Are you sure you want to delete this subscriber?")) {
             try {
               await db.collection("subscriptions").doc(docId).delete();
-              // optional: remove row without reloading
               btn.closest("tr").remove();
             } catch (err) {
               console.error("Delete error:", err);
@@ -1030,13 +995,14 @@ function loadSubscriptions() {
           }
         });
       });
-    }, err => console.error("Firestore subscription error:", err));
+    }, err => console.error("Firestore error:", err));
 }
 
-// Call once on page load
 document.addEventListener("DOMContentLoaded", loadSubscriptions);
-  </script>
+</script>
+
   
 
 </body>
 </html>
+
