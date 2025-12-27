@@ -269,6 +269,23 @@ async function login() {
   }
 }
 
+ 
+
+ <script type="module">
+import { auth, onAuthStateChanged } from "./firebase.js";
+
+onAuthStateChanged(auth, (user) => {
+    if (user && user.emailVerified) {
+        // Already logged in → go to dashboard
+        window.location.replace("dashboard.html");
+    }
+});
+</script>
+
+
+
+
+ 
 /* ---------- Click Events ---------- */
 document.getElementById("loginBtn").onclick = login;
 
@@ -280,6 +297,7 @@ document.addEventListener("keydown", (e) => {
 
 </body>
 </html>
+
 
 
 
