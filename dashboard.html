@@ -306,6 +306,33 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         </div>
       </section>
 
+
+          <!-- News Subscription -->
+            <section id="reports" class="page hidden">
+        <div class="card">
+          <h3>News Subscription</h3>
+  <div class="card" style="margin-bottom:12px">
+    <h3>Email Subscriptions</h3>
+    <p class="muted">Emails collected from website newsletter form</p>
+  </div>
+
+  <div class="card">
+    <table class="table" id="subscriptionsTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Email</th>
+          <th>Date Subscribed</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+      </section>
+
+
+      
+
       <section id="settings" class="page hidden">
         <div class="card">
           <h3>Settings</h3>
@@ -966,6 +993,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
