@@ -267,7 +267,32 @@ async function login() {
 
   } catch (err) {
     document.getElementById("loadingPopup").style.display = "none";
-    errorMsg.textContent = err.message;
+    let message = "Login failed. Please try again.";
+
+switch (err.code) {
+  case "auth/invalid-credential":
+    message = "Incorrect email or password.";
+    break;
+
+  case "auth/user-not-found":
+    message = "No account found with this email.";
+    break;
+
+  case "auth/wrong-password":
+    message = "Incorrect password.";
+    break;
+
+  case "auth/too-many-requests":
+    message = "Too many attempts. Please try again later.";
+    break;
+
+  case "auth/user-disabled":
+    message = "This account has been disabled. Contact admin.";
+    break;
+}
+
+errorMsg.textContent = message;
+
     loginBox.classList.add("shake");
     setTimeout(() => loginBox.classList.remove("shake"), 300);
   }
@@ -282,4 +307,5 @@ document.addEventListener("keydown", e => e.key === "Enter" && login());
 
 </body>
 </html>
+
 
