@@ -270,31 +270,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       </section>
 
       
-      
-      <button data-page="subscriptions">📨 Subscriptions</button>
-      <section id="subscriptions" class="page hidden">
-  <div class="card" style="margin-bottom:12px">
-    <h3>Email Subscriptions</h3>
-    <p class="muted">Emails collected from website newsletter form</p>
-  </div>
-
-  <div class="card">
-    <table class="table" id="subscriptionsTable">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Email</th>
-          <th>Date Subscribed</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
-
-      
-
-      <section id="reports" class="page hidden">
+        <section id="reports" class="page hidden">
         <div class="card">
           <h3>Reports</h3>
           <p class="muted">Quick revenue and booking exports</p>
@@ -306,6 +282,20 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         </div>
       </section>
 
+
+
+        <section id="reports" class="page hidden">
+        <div class="card">
+          <h3>Reports</h3>
+          <p class="muted">Quick revenue and booking exports</p>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div style="flex:1" class="card"><b>Total Revenue</b><div id="reportRevenue">GHS 0</div></div>
+            <div style="flex:1" class="card"><b>Bookings Count</b><div id="reportBookings">0</div></div>
+            <div style="flex:1" class="card"><b>Pending</b><div id="reportPending">0</div></div>
+          </div>
+        </div>
+      </section>
+      
 
           <!-- News Subscription -->
             <section id="reports" class="page hidden">
@@ -993,6 +983,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
