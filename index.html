@@ -271,18 +271,6 @@ async function login() {
 
  
 
- <script type="module">
-import { auth, onAuthStateChanged } from "./firebase.js";
-
-onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified) {
-        // Already logged in → go to dashboard
-        window.location.replace("dashboard.html");
-    }
-});
-</script>
-
-
 
 
  
@@ -297,6 +285,7 @@ document.addEventListener("keydown", (e) => {
 
 </body>
 </html>
+
 
 
 
