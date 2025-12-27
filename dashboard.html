@@ -135,13 +135,14 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 <div><h1>GTEC Conference</h1><div class="small muted">Facility Management</div></div></div>
 
       <div class="nav" role="navigation">
-        <button class="active" data-page="dashboard">🏠 Dashboard</button>
+        <button class="active" data-page="dashboard">🎯 Dashboard</button>
         <button data-page="institutions">🏫 Institutions</button>
-        <button data-page="venues">📍 Venues</button>
+        <button data-page="venues">🏛️ Halls</button>
         <button data-page="invoices">🧾 Invoices</button>
         <button data-page="users">👥 Users & Roles</button>
         <button data-page="reports">📊 Reports</button>
-        <button data-page="news">📜 News Subscription</button>
+        <button data-page="news">📜 News Subscribers</button>
+        <button data-page="documents">🗂️ Documents</button>
         <button data-page="settings">⚙️ Settings</button>
       </div>
 
@@ -254,7 +255,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       <section id="venues" class="page hidden">
         <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h3 style="margin:0">Venues & Pricing</h3>
+          <h3 style="margin:0">Halls & Pricing</h3>
           <div><button class="btn" id="btnAddVenue">+ Add Venue</button></div>
         </div>
         <div class="card">
@@ -295,19 +296,6 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         </div>
       </section>
 
-
-
-        <section id="reports" class="page hidden">
-        <div class="card">
-          <h3>Reports</h3>
-          <p class="muted">Quick revenue and booking exports</p>
-          <div style="display:flex;gap:12px;margin-top:12px">
-            <div style="flex:1" class="card"><b>Total Revenue</b><div id="reportRevenue">GHS 0</div></div>
-            <div style="flex:1" class="card"><b>Bookings Count</b><div id="reportBookings">0</div></div>
-            <div style="flex:1" class="card"><b>Pending</b><div id="reportPending">0</div></div>
-          </div>
-        </div>
-      </section>
       
 
           <!-- News Subscription -->
@@ -334,6 +322,62 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 </section>
 
 
+      <!-- Documents Archive -->
+<section id="documents" class="page hidden">
+  <div class="card">
+    <h3>Documents</h3>
+    <p class="muted">Official documents available for download</p>
+
+    <div style="margin-top:16px">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Document Name</th>
+            <th>Type</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Hall Usage Guidelines</td>
+            <td>PDF</td>
+            <td>
+              <a href="documents/Guidelines for Booking _ 2026.pdf" download class="btn">
+                ⬇ Download
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td>2</td>
+            <td>Booking Terms & Conditions</td>
+            <td>PDF</td>
+            <td>
+              <a href="documents/Guidelines for Booking _ 2026.pdf" download class="btn">
+                ⬇ Download
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td>3</td>
+            <td>Price List</td>
+            <td>DOCX</td>
+            <td>
+              <a href="documents/price-list.docx" download class="btn">
+                ⬇ Download
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+      
       
 
      <!-- Settings - Profile -->
@@ -1149,6 +1193,7 @@ firebase.auth().onAuthStateChanged(user => {
   
 </body>
 </html>
+
 
 
 
