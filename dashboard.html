@@ -17,7 +17,7 @@ import { auth, onAuthStateChanged, signOut } from "./firebase.js";
 
 onAuthStateChanged(auth, (user) => {
     if (!user || !user.emailVerified) {
-        window.location.href = "login.html";
+        window.location.href = "dashboard.html";
     }
 });
 
@@ -265,6 +265,31 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
         </div>
       </section>
 
+      
+      
+      <button data-page="subscriptions">📨 Subscriptions</button>
+      <section id="subscriptions" class="page hidden">
+  <div class="card" style="margin-bottom:12px">
+    <h3>Email Subscriptions</h3>
+    <p class="muted">Emails collected from website newsletter form</p>
+  </div>
+
+  <div class="card">
+    <table class="table" id="subscriptionsTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Email</th>
+          <th>Date Subscribed</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+      
+
       <section id="reports" class="page hidden">
         <div class="card">
           <h3>Reports</h3>
@@ -323,6 +348,52 @@ function logout() {
 }
 
 </script>
+  
+
+<script>
+const db = firebase.firestore();
+
+async function loadSubscriptions() {
+  const tbody = document.querySelector("#subscriptionsTable tbody");
+  tbody.innerHTML = "";
+
+  try {
+    const snapshot = await db
+      .collection("subscriptions")
+      .orderBy("createdAt", "desc")
+      .get();
+
+    let index = 1;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const tr = document.createElement("tr");
+
+      const date = data.createdAt
+        ? data.createdAt.toDate().toLocaleString()
+        : "";
+
+      tr.innerHTML = `
+        <td>${index++}</td>
+        <td>${data.email}</td>
+        <td>${date}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+  } catch (err) {
+    console.error("Failed to load subscriptions:", err);
+  }
+}
+</script>
+
+  
+  
+
+
+  
+
+  
 
   
 
@@ -553,7 +624,16 @@ async function renderChart(){
     /*******************************
      * Interactions: Nav + buttons
      *******************************/
-    qsa('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+    qsa('.nav button').forEach(b =>
+  b.addEventListener('click', () => {
+    showPage(b.dataset.page);
+
+    if (b.dataset.page === "subscriptions") {
+      loadSubscriptions();
+    }
+  })
+);
+
 
     // new booking button opens invoice modal
     qs('#btnNewBooking').addEventListener('click', ()=>openInvoiceModal());
@@ -882,6 +962,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
