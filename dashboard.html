@@ -299,27 +299,28 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       
 
           <!-- News Subscription -->
-            <section id="news" class="page hidden">
-        <div class="card">
-          <h3>News Subscription</h3>
+<section id="news" class="page hidden">
   <div class="card" style="margin-bottom:12px">
-    <h3>Email Subscriptions</h3>
+    <h3>News Subscription</h3>
     <p class="muted">Emails collected from website newsletter form</p>
   </div>
 
   <div class="card">
     <table class="table" id="subscriptionsTable">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Email</th>
-          <th>Date Subscribed</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Email</th>
+      <th>Date Subscribed</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
   </div>
-      </section>
+</section>
+
 
 
       
@@ -961,6 +962,7 @@ qs('#statBookings').textContent = pending + cancelled + completed;
 qs('#reportBookings').textContent = pending + cancelled + completed;
 
 // optional: keep reportPending updated
+
 qs('#reportPending').textContent = pending;
 
 
@@ -982,8 +984,60 @@ qs('#reportPending').textContent = pending;
     });
 
   </script>
+
+
+  
+  <!-- Fetch email subscription of news letters -->
+  <script>
+
+    const subscriptionsTableBody = document.querySelector("#subscriptionsTable tbody");
+
+db.collection("subscriptions")
+  .orderBy("createdAt", "desc")
+  .onSnapshot(snapshot => {
+    subscriptionsTableBody.innerHTML = "";
+    let count = 1;
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const date = data.createdAt?.toDate().toLocaleString() || "Unknown date";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${count}</td>
+        <td>${data.email}</td>
+        <td>${date}</td>
+        <td><button class="delete-btn" data-id="${doc.id}">Delete</button></td>
+      `;
+
+      subscriptionsTableBody.appendChild(tr);
+      count++;
+    });
+
+    // Attach delete handlers
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const docId = btn.getAttribute("data-id");
+        if (confirm("Are you sure you want to delete this subscriber?")) {
+          try {
+            await db.collection("subscriptions").doc(docId).delete();
+            alert("Subscriber deleted successfully!");
+          } catch (err) {
+            console.error("Delete error:", err);
+            alert("Failed to delete subscriber.");
+          }
+        }
+      });
+    });
+  }, error => {
+    console.error("Error fetching subscriptions in real-time:", error);
+  });
+
+  </script>
+
 </body>
 </html>
+
 
 
 
