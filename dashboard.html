@@ -17,7 +17,7 @@ import { auth, onAuthStateChanged, signOut } from "./firebase.js";
 
 onAuthStateChanged(auth, (user) => {
     if (!user || !user.emailVerified) {
-        window.location.href = "dashboard.html";
+        window.location.href = "login.html";
     }
 });
 
@@ -882,6 +882,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
