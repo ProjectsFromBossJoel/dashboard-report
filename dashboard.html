@@ -647,15 +647,17 @@ async function renderChart(){
     /*******************************
      * Interactions: Nav + buttons
      *******************************/
-    qsa('.nav button').forEach(b =>
+   qsa('.nav button').forEach(b =>
   b.addEventListener('click', () => {
     showPage(b.dataset.page);
 
-    if (b.dataset.page === "subscriptions") {
+    if (b.dataset.page === "news") {  // <-- match your section ID
       loadSubscriptions();
     }
   })
 );
+
+    
 
 
     // new booking button opens invoice modal
@@ -989,78 +991,52 @@ qs('#reportPending').textContent = pending;
   
   <!-- Fetch email subscription of news letters -->
   <script>
+function loadSubscriptions() {
+  const tbody = document.querySelector("#subscriptionsTable tbody");
 
-    const subscriptionsTableBody = document.querySelector("#subscriptionsTable tbody");
+  db.collection("subscriptions")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      tbody.innerHTML = ""; // clear table
+      let index = 1;
 
-db.collection("subscriptions")
-  .orderBy("createdAt", "desc")
-  .onSnapshot(snapshot => {
-    subscriptionsTableBody.innerHTML = "";
-    let count = 1;
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const date = data.createdAt ? data.createdAt.toDate().toLocaleString() : "Unknown";
 
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const date = data.createdAt?.toDate().toLocaleString() || "Unknown date";
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${count}</td>
-        <td>${data.email}</td>
-        <td>${date}</td>
-        <td><button class="delete-btn" data-id="${doc.id}">Delete</button></td>
-      `;
-
-      subscriptionsTableBody.appendChild(tr);
-      count++;
-    });
-
-    // Attach delete handlers
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const docId = btn.getAttribute("data-id");
-        if (confirm("Are you sure you want to delete this subscriber?")) {
-          try {
-            await db.collection("subscriptions").doc(docId).delete();
-            alert("Subscriber deleted successfully!");
-          } catch (err) {
-            console.error("Delete error:", err);
-            alert("Failed to delete subscriber.");
-          }
-        }
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${index++}</td>
+          <td>${data.email}</td>
+          <td>${date}</td>
+          <td><button class="delete-btn" data-id="${doc.id}">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
       });
-    });
-  }, error => {
-    console.error("Error fetching subscriptions in real-time:", error);
-  });
 
+      // Attach delete handlers
+      tbody.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const docId = btn.dataset.id;
+          if (confirm("Are you sure you want to delete this subscriber?")) {
+            try {
+              await db.collection("subscriptions").doc(docId).delete();
+              // optional: remove row without reloading
+              btn.closest("tr").remove();
+            } catch (err) {
+              console.error("Delete error:", err);
+              alert("Failed to delete subscriber.");
+            }
+          }
+        });
+      });
+    }, err => console.error("Firestore subscription error:", err));
+}
+
+// Call once on page load
+document.addEventListener("DOMContentLoaded", loadSubscriptions);
   </script>
+  
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
