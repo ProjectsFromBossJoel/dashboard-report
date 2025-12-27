@@ -218,26 +218,27 @@ const firebaseConfig = {
   measurementId: "G-ZCVWTTFT2H"
 };
 
+ 
+
 firebase.initializeApp(firebaseConfig);
 
-/* ---------- UI Elements ---------- */
+firebase.auth().onAuthStateChanged((user) => {
+  if (user && user.emailVerified) {
+    window.location.replace("dashboard.html");
+  }
+});
+
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const errorMsg = document.getElementById("errorMsg");
 const loginBox = document.getElementById("loginBox");
+const togglePassword = document.getElementById("togglePassword");
 
-/* ---------- Password Toggle ---------- */
-document.getElementById("togglePassword").onclick = () => {
-  if (passwordInput.type === "password") {
-    passwordInput.type = "text";
-    togglePassword.textContent = "Hide";
-  } else {
-    passwordInput.type = "password";
-    togglePassword.textContent = "Show";
-  }
+togglePassword.onclick = () => {
+  passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+  togglePassword.textContent = passwordInput.type === "password" ? "Show" : "Hide";
 };
 
-/* ---------- Login Function ---------- */
 async function login() {
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
@@ -250,48 +251,35 @@ async function login() {
     return;
   }
 
-  // Show loader
   document.getElementById("loadingPopup").style.display = "flex";
 
   try {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
+    const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
 
-    // Redirect on success
-    window.location.href = "dashboard.html";
+    if (!cred.user.emailVerified) {
+      document.getElementById("loadingPopup").style.display = "none";
+      errorMsg.textContent = "Please verify your email.";
+      await firebase.auth().signOut();
+      return;
+    }
+
+    window.location.replace("dashboard.html");
 
   } catch (err) {
-    // Hide loader
     document.getElementById("loadingPopup").style.display = "none";
-
     errorMsg.textContent = err.message;
     loginBox.classList.add("shake");
     setTimeout(() => loginBox.classList.remove("shake"), 300);
   }
 }
 
- 
-
-
-
- 
-/* ---------- Click Events ---------- */
 document.getElementById("loginBtn").onclick = login;
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") login();
-});
+document.addEventListener("keydown", e => e.key === "Enter" && login());
 </script>
+
+
 
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
 
