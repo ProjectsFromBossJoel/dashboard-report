@@ -151,7 +151,10 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         <div class="stat"><div><div class="small muted">Pending</div><div class="val" id="statPending">0</div></div><div class="pill">!</div></div>
       </div>
 
-      <div style="margin-top:12px;font-size:13px;color:var(--muted);">Logged in as <b>User</b></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted);">
+  Logged in as <b id="loggedInUser">Loading...</b>
+</div>
+
     </aside>
 
     <!-- MAIN -->
@@ -331,22 +334,40 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 </section>
 
 
-
       
 
-      <section id="settings" class="page hidden">
-        <div class="card">
-          <h3>Settings</h3>
-          <p class="muted">Local demo settings (stored in browser). Connect to your backend to persist.</p>
-          <div style="margin-top:12px">
-            <label>Organization Name</label>
-            <input id="orgName" placeholder="GTEC Conference" />
-            <div style="height:12px"></div>
-            <label>Default Currency</label>
-            <input id="orgCurrency" placeholder="GHS" />
-          </div>
-        </div>
-      </section>
+     <!-- Settings - Profile -->
+<section id="settings" class="page hidden">
+  <div class="card">
+    <h3>Profile</h3>
+    <p class="muted">Manage your account and change your password</p>
+
+    <div style="margin-top:16px">
+      <label>Email</label>
+      <input id="profileEmail" type="email" disabled />
+
+      <div style="height:12px"></div>
+
+      <label>New Password</label>
+      <input id="newPassword" type="password" placeholder="Enter new password" />
+
+      <div style="height:12px"></div>
+
+      <label>Confirm Password</label>
+      <input id="confirmPassword" type="password" placeholder="Confirm new password" />
+
+      <div style="height:16px"></div>
+
+      <button id="updatePasswordBtn" class="btn primary">
+        Update Password
+      </button>
+
+      <p id="profileMessage" class="muted" style="margin-top:10px; display:none;"></p>
+    </div>
+  </div>
+</section>
+
+      
 
       <footer>GTEC Conference Facility Dashboard - 2025</footer>
     </main>
@@ -357,6 +378,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
   <script>
 // Your web app's Firebase configuration
+
 const firebaseConfig = {
   apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
   authDomain: "userlogin-44d0a.firebaseapp.com",
@@ -382,6 +404,68 @@ function logout() {
 </script>
    
 
+<!-- Settings - Profile -->
+<script>
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Show logged-in email
+  document.getElementById("profileEmail").value = user.email;
+});
+
+document.getElementById("updatePasswordBtn").addEventListener("click", async () => {
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const msg = document.getElementById("profileMessage");
+
+  msg.style.display = "block";
+
+  if (!newPassword || !confirmPassword) {
+    msg.textContent = "Please fill all password fields.";
+    msg.style.color = "red";
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    msg.textContent = "Password must be at least 6 characters.";
+    msg.style.color = "red";
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    msg.textContent = "Passwords do not match.";
+    msg.style.color = "red";
+    return;
+  }
+
+  try {
+    const user = firebase.auth().currentUser;
+    await user.updatePassword(newPassword);
+
+    msg.textContent = "Password updated successfully.";
+    msg.style.color = "green";
+
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+  } catch (error) {
+    console.error(error);
+
+    if (error.code === "auth/requires-recent-login") {
+      msg.textContent = "Please log out and log in again to change your password.";
+    } else {
+      msg.textContent = "Failed to update password.";
+    }
+    msg.style.color = "red";
+  }
+});
+</script>
+
+  
+  
   
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -1048,9 +1132,24 @@ document.getElementById("subscribeForm").addEventListener("submit", async functi
 </script>
 
   
+<!-- Logged In As User/Admin (Email)-->
+<script>
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
 
+  // Show logged-in email
+  document.getElementById("loggedInUser").textContent = user.email;
+});
+</script>
+
+  
+  
 </body>
 </html>
+
 
 
 
