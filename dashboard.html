@@ -12,21 +12,25 @@
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module">
+<script type="module">
 import { auth, onAuthStateChanged, signOut } from "./firebase.js";
 
 onAuthStateChanged(auth, (user) => {
     if (!user || !user.emailVerified) {
-        window.location.href = "dashboard.html";
+        // ❗ Redirect UNAUTHENTICATED users to LOGIN
+        window.location.replace("index.html");
     }
 });
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
     signOut(auth).then(() => {
-        window.location.href = "index.html";
+        window.location.replace("index.html");
     });
 });
 </script>
+
+  
+  
 
   <style>
     :root{
@@ -962,6 +966,7 @@ qs('#reportPending').textContent = pending;
   </script>
 </body>
 </html>
+
 
 
 
