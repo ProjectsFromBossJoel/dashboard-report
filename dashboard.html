@@ -278,15 +278,79 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         </div>
       </section>
 
-      <section id="users" class="page hidden">
-        <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h3 style="margin:0">Users & Roles</h3>
-          <div><button class="btn" id="btnAddUser">+ Add User</button></div>
-        </div>
-        <div class="card">
-          <table class="table" id="usersTable"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody></tbody></table>
-        </div>
-      </section>
+
+      
+<section id="users" class="page hidden">
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3 style="margin:0">Users & Roles</h3>
+    <div><button class="btn" id="btnAddUser">+ Add User</button></div>
+  </div>
+
+  <div class="card">
+    <table class="table" id="usersTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  const usersTableBody = document.querySelector('#usersTable tbody');
+  const db = firebase.firestore();
+
+  // Function to render users
+  const renderUsers = (snapshot) => {
+    usersTableBody.innerHTML = ''; // Clear table first
+    snapshot.forEach(doc => {
+      const user = doc.data();
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.role}</td>
+        <td>
+          <button class="btn-edit" data-id="${doc.id}">Edit</button>
+          <button class="btn-delete" data-id="${doc.id}">Delete</button>
+        </td>
+      `;
+      usersTableBody.appendChild(tr);
+    });
+  };
+
+  // Real-time listener for users collection
+  db.collection('users').onSnapshot(renderUsers, err => {
+    console.error("Error fetching users:", err);
+  });
+
+  // Delete user functionality
+  usersTableBody.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('btn-delete')) {
+      const id = e.target.dataset.id;
+      if (confirm("Are you sure you want to delete this user?")) {
+        try {
+          await db.collection('users').doc(id).delete();
+          alert("User deleted successfully");
+        } catch (err) {
+          console.error("Error deleting user:", err);
+          alert("Failed to delete user.");
+        }
+      }
+    }
+  });
+
+  // You can also handle Edit button click here later
+</script>
+
+
+
+      
 
       <!-- Report -->
         <section id="reports" class="page hidden">
@@ -1332,6 +1396,7 @@ firebase.auth().onAuthStateChanged(user => {
   
 </body>
 </html>
+
 
 
 
