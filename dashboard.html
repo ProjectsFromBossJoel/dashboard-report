@@ -1251,6 +1251,39 @@ document.addEventListener("DOMContentLoaded", loadContactMessages);
 </script>
   
 
+<!-- TimeOut LogOut Session -->
+
+<script>
+let inactivityTimer;
+
+// Time in milliseconds (5 minutes)
+const LOGOUT_TIME = 5 * 60 * 1000;
+
+// Function to sign out the user
+function autoLogout() {
+  alert("You have been logged out due to inactivity.");
+  firebase.auth().signOut().then(() => {
+    window.location.href = "index.html"; // redirect to login
+  });
+}
+
+// Reset the inactivity timer
+function resetTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(autoLogout, LOGOUT_TIME);
+}
+
+// List of events considered as activity
+["mousemove", "keydown", "mousedown", "touchstart", "click"].forEach(event => {
+  document.addEventListener(event, resetTimer);
+});
+
+// Start the timer when page loads
+resetTimer();
+</script>
+
+  
+  
   
 <!-- Logged In As User/Admin (Email)-->
 <script>
@@ -1269,6 +1302,7 @@ firebase.auth().onAuthStateChanged(user => {
   
 </body>
 </html>
+
 
 
 
