@@ -3,12 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-<!-- Replace your Firebase imports with these: -->
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
-  
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
   
   
   <title>GTEC Conference Facility — Admin Dashboard</title>
@@ -17,7 +21,23 @@
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+<script type="module">
+import { auth, onAuthStateChanged, signOut } from "./firebase.js";
+
+onAuthStateChanged(auth, (user) => {
+    if (!user || !user.emailVerified) {
+        // ❗ Redirect UNAUTHENTICATED users to LOGIN
+        window.location.replace("index.html");
+    }
+});
+
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    signOut(auth).then(() => {
+        window.location.replace("index.html");
+    });
+});
+</script>
+
   
   
 
@@ -493,40 +513,31 @@
   <!-- MODALS (hidden) -->
   <div id="modalRoot"></div>
 
-
   <script>
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
-    authDomain: "userlogin-44d0a.firebaseapp.com",
-    projectId: "userlogin-44d0a",
-    storageBucket: "userlogin-44d0a.firebasestorage.app",
-    messagingSenderId: "47108256134",
-    appId: "1:47108256134:web:60888fa5f06dfb075d3c07",
-    measurementId: "G-ZCVWTTFT2H"
-  };
-  // Initialize Firebase
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  // Initialize Firestore
-  const db = firebase.firestore();
-  // Authentication state listener
-  firebase.auth().onAuthStateChanged(user => {
-    if (!user || !user.emailVerified) {
-      window.location.href = "index.html";
-      return;
-    }
-    // Show logged-in email
-    document.getElementById("loggedInUser").textContent = user.email;
-    document.getElementById("profileEmail").value = user.email;
+// Your web app's Firebase configuration
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA80t2tr136ihN57YQWwD4nYcPhyutACX4",
+  authDomain: "userlogin-44d0a.firebaseapp.com",
+  projectId: "userlogin-44d0a",
+  storageBucket: "userlogin-44d0a.firebasestorage.app",
+  messagingSenderId: "47108256134",
+  appId: "1:47108256134:web:60888fa5f06dfb075d3c07",
+  measurementId: "G-ZCVWTTFT2H"
+};
+    
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) window.location.href = "index.html";
+});
+
+function logout() {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "index.html";
   });
-    // Logout function
-  document.getElementById("logoutBtn")?.addEventListener("click", () => {
-    firebase.auth().signOut().then(() => {
-      window.location.href = "index.html";
-    });
-  });
+}
+
 </script>
    
 
@@ -1385,6 +1396,15 @@ firebase.auth().onAuthStateChanged(user => {
   
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 
