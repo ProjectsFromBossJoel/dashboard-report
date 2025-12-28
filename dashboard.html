@@ -134,7 +134,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
   <img src="logo1.jpg" alt="GTEC Logo" class="logo" style="height:50px; width:auto;">
 <div><h1>GTEC Conference</h1><div class="small muted">Facility Management</div></div></div>
             <div style="margin-top:12px;font-size:13px;color:var(--muted);">
-  Logged in as <b id="loggedInUser">Loading...</b>
+  👋Welcome back <b id="loggedInUser">Loading...</b>
 
       <div class="nav" role="navigation">
         <button class="active" data-page="dashboard">🎯 Dashboard</button>
@@ -143,7 +143,12 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         <button data-page="invoices">🧾 Invoices</button>
         <button data-page="users">👥 Users & Roles</button>
         <button data-page="reports">📊 Reports</button>
-        <button data-page="messages">📩 Contact Messages</button>
+        
+        <button id="messagesBtn" data-page="messages">
+  📩 Contact Messages
+  <span id="newMessageDot" style="display:none; background:red; width:10px; height:10px; border-radius:50%; margin-left:5px; display:inline-block;"></span>
+</button>
+
         <button data-page="news">📜 News Subscribers</button>
         <button data-page="documents">🗂️ Documents</button>
         <button data-page="settings">⚙️ Settings</button>
@@ -151,8 +156,6 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       <div class="quick">
         <div class="stat"><div><div class="small muted">Bookings</div><div class="val" id="statBookings">0</div></div><div class="pill">Live</div></div>
-        <div class="stat"><div><div class="small muted">Revenue</div><div class="val" id="statRevenue">GHS 0</div></div><div class="pill">₵</div></div>
-        <div class="stat"><div><div class="small muted">Pending</div><div class="val" id="statPending">0</div></div><div class="pill">!</div></div>
       </div>
 
 
@@ -1282,6 +1285,33 @@ function resetTimer() {
 resetTimer();
 </script>
 
+
+<!-- Red Dot on Contact Messages -->
+  <script>
+  // Reference to button and dot
+const messagesBtn = document.getElementById('messagesBtn');
+const newMessageDot = document.getElementById('newMessageDot');
+
+// Listen for new contact messages in Firestore
+db.collection('contactMessages')
+  .orderBy('createdAt', 'desc')
+  .limit(1)
+  .onSnapshot(snapshot => {
+    snapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        // Show the red dot when a new message is added
+        newMessageDot.style.display = 'inline-block';
+      }
+    });
+  });
+
+// Optional: hide dot when button is clicked
+messagesBtn.addEventListener('click', () => {
+  newMessageDot.style.display = 'none';
+});
+  </script>
+
+
   
   
   
@@ -1302,6 +1332,9 @@ firebase.auth().onAuthStateChanged(user => {
   
 </body>
 </html>
+
+
+
 
 
 
