@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -528,16 +528,6 @@ const firebaseConfig = {
     
 firebase.initializeApp(firebaseConfig);
 
-firebase.auth().onAuthStateChanged(user => {
-  if (!user) window.location.href = "index.html";
-});
-
-function logout() {
-  firebase.auth().signOut().then(() => {
-    window.location.href = "index.html";
-  });
-}
-
 </script>
    
 
@@ -728,14 +718,6 @@ document.getElementById("updatePasswordBtn").addEventListener("click", async () 
       });
     }
 
-    function renderUsers(){
-      const tbody = qs('#usersTable tbody'); tbody.innerHTML = '';
-      users.forEach(u=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${u.name}</td><td>${u.email}</td><td>${u.role}</td><td><button data-id='${u.id}' class='btn ghost editUser'>Edit</button></td>`;
-        tbody.appendChild(tr);
-      });
-    }
 
     function renderInvoices(){
       const tbody = qs('#invoicesTable tbody'); tbody.innerHTML = '';
@@ -1232,7 +1214,7 @@ document.getElementById("subscribeForm").addEventListener("submit", async functi
   if (!email) return;
 
   try {
-    // 🔒 CHECK IF EMAIL ALREADY EXISTS
+    // CHECK IF EMAIL ALREADY EXISTS
     const existing = await db
       .collection("subscriptions")
       .where("email", "==", email)
@@ -1396,16 +1378,3 @@ firebase.auth().onAuthStateChanged(user => {
   
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
