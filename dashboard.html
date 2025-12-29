@@ -1099,88 +1099,178 @@ qs('#globalSearch').addEventListener('input', function(){
     }
     document.addEventListener('click', (e)=>{ if(e.target.classList.contains('editUser')){ const id=Number(e.target.dataset.id); openUserModal(users.find(u=>u.id===id)); } });
 
+    
     /*******************************
      * Invoice Modal + generate
      *******************************/
-    function generateInvoiceNo(){
-      const prefix='GTEC'; const t = Date.now().toString().slice(-6); return `${prefix}-${t}`;
-    }
+/************************************
+ * UTILITIES
+ ************************************/
+function fmt(n) {
+  return Number(n).toLocaleString("en-GH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
 
-    function openInvoiceModal(prefill){
-      const instOptions = institutions.map(i=>`<option value='${i.id}'>${i.name}</option>`).join('');
-      const venueOptions = venues.map(v=>`<option value='${v.name}'>${v.name}</option>`).join('');
-      const html = `
+function getInvoices() {
+  return JSON.parse(localStorage.getItem("invoices")) || [];
+}
+
+/************************************
+ * INVOICE MODAL (iframe-based)
+ ************************************/
+function openInvoiceModal() {
+  const html = `
+    <div style="height:100%;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <h3>Generate Invoice</h3>
-        <div style='display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px'>
-          <div><label>Institution</label><select id='invInst'><option value=''>-- select --</option>${instOptions}</select></div>
-          <div><label>Coordinator Email</label><input id='invEmail' placeholder='coordinator@example.com' /></div>
-          <div><label>Venue</label><select id='invVenue'><option value=''>-- select --</option>${venueOptions}</select></div>
-          <div><label>With Additional Services?</label><select id='invService'><option value='no'>No</option><option value='yes'>Yes</option></select></div>
-          <div><label>Date</label><input id='invDate' type='date' value='${new Date().toISOString().slice(0,10)}' /></div>
-          <div><label>Invoice No</label><input id='invNo' readonly value='${generateInvoiceNo()}' /></div>
+        <button class="btn ghost" id="closeInvoiceModal">Close</button>
+      </div>
+
+      <iframe
+        src="invoice-generator.html"
+        style="flex:1;width:100%;border:none;margin-top:10px"
+        id="invoiceIframe">
+      </iframe>
+    </div>
+  `;
+
+  const modal = openModal(html);
+
+  modal.querySelector("#closeInvoiceModal").addEventListener("click", () => {
+    document.querySelector("#modalRoot").innerHTML = "";
+    loadInvoices();
+  });
+}
+
+/************************************
+ * LOAD INVOICES INTO TABLE
+ ************************************/
+function loadInvoices() {
+  const tbody = document.querySelector("#invoicesTable tbody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  const invoices = getInvoices();
+
+  if (!invoices.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center">No invoices yet</td></tr>`;
+    return;
+  }
+
+  invoices.forEach(inv => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${inv.invoiceNo}</td>
+      <td>${inv.coordinator || "-"}</td>
+      <td>${inv.venue}</td>
+      <td>GHS ${fmt(inv.amount)}</td>
+      <td>${inv.date}</td>
+      <td>${inv.status || "Pending"}</td>
+      <td>
+        <button class="btn ghost previewInv" data-id="${inv.id}">View</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/************************************
+ * PREVIEW + DOWNLOAD INVOICE
+ ************************************/
+function openInvoicePreview(invId) {
+  const invoices = getInvoices();
+  const inv = invoices.find(i => i.id === invId);
+  if (!inv) return;
+
+  const html = `
+    <div id="invoicePreview">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h2>GTEC HOSPITALITY MANAGEMENT SERVICES</h2>
+          <div>P.O. BOX MB 28, Ministries – Accra</div>
         </div>
-        <div style='display:flex;gap:8px;margin-top:12px;align-items:center'><button id='calcCost' class='btn ghost'>Calculate</button><div class='muted'>Amount: <b id='calcAmount'>GHS 0.00</b></div></div>
-        <div style='margin-top:12px;text-align:right'><button id='saveInvoice' class='btn'>Save & Preview</button></div>
-      `;
-      const modal = openModal(html);
-
-      modal.querySelector('#invInst').addEventListener('change', function(){
-        const inst = institutions.find(i=>i.id==this.value); if(inst) modal.querySelector('#invEmail').value = inst.email||'';
-      });
-
-      modal.querySelector('#calcCost').addEventListener('click', ()=>{
-        const venueName = modal.querySelector('#invVenue').value; const want = modal.querySelector('#invService').value==='yes';
-        const v = venues.find(vv=>vv.name===venueName);
-        const amt = v ? (want? v.withServices: v.base) : 0;
-        modal.querySelector('#calcAmount').textContent = 'GHS ' + fmt(amt);
-      });
-
-      modal.querySelector('#saveInvoice').addEventListener('click', ()=>{
-        const instId = Number(modal.querySelector('#invInst').value)||null;
-        const email = modal.querySelector('#invEmail').value.trim();
-        const venue = modal.querySelector('#invVenue').value;
-        const want = modal.querySelector('#invService').value==='yes';
-        const v = venues.find(vv=>vv.name===venue);
-        const amount = v ? (want? v.withServices: v.base) : 0;
-        const date = modal.querySelector('#invDate').value;
-        const invoiceNo = modal.querySelector('#invNo').value;
-        const id = Date.now();
-        invoices.push({id, invoiceNo, institutionId:instId, institution: instId? null : 'Manual', coordinatorEmail:email, venue, amount, date, status:'Pending'});
-        persist();
-        // open preview
-        openInvoicePreview(id);
-        document.querySelector('#modalRoot').innerHTML='';
-      });
-    }
-
-    /*******************************
-     * Preview + download invoice (simple template)
-     *******************************/
-    function openInvoicePreview(invId){
-      const inv = invoices.find(i=>i.id===invId);
-      const inst = institutions.find(i=>i.id===inv.institutionId) || {name:inv.institution||'Manual'};
-      const html = `
-        <div id='invoicePreview'>
-          <div style='display:flex;justify-content:space-between;align-items:center'><div><h2>GTEC HOSPITALITY MANAGEMENT SERVICES</h2><div>P.O.BOX MB 28, MINISTRIES – ACCRA</div></div><div style='text-align:right'><div><b>Invoice No:</b> ${inv.invoiceNo}</div><div><b>Date:</b> ${inv.date}</div></div></div>
-          <hr style='margin:12px 0' />
-          <div style='display:flex;justify-content:space-between'><div><b>Coordinator:</b> ${inst.name}</div><div><b>Email:</b> ${inv.coordinatorEmail||''}</div></div>
-          <div style='margin-top:12px'>
-            <table style='width:100%;border-collapse:collapse' border='1'><thead><tr><th>SI No</th><th>Description</th><th>Amount</th></tr></thead><tbody><tr><td>1</td><td>${inv.venue}</td><td>GHS ${fmt(inv.amount)}</td></tr><tr><td colspan='2' style='text-align:right'><b>TOTAL</b></td><td><b>GHS ${fmt(inv.amount)}</b></td></tr></tbody></table>
-          </div>
-          <div style='margin-top:20px;text-align:right'><button id='dlPdf' class='btn'>Download PDF</button></div>
+        <div style="text-align:right">
+          <div><b>Invoice No:</b> ${inv.invoiceNo}</div>
+          <div><b>Date:</b> ${inv.date}</div>
         </div>
-      `;
-      const modal = openModal(html);
-      modal.querySelector('#dlPdf').addEventListener('click', ()=>{
-        const opt = {filename:`${inv.invoiceNo}.pdf`,jsPDF:{unit:'pt',format:'a4'}};
-        html2pdf().from(modal.querySelector('#invoicePreview')).set(opt).save();
-      });
-    }
+      </div>
 
-    document.addEventListener('click', (e)=>{
-      if(e.target.classList.contains('previewInv')){ const id = Number(e.target.dataset.id); openInvoicePreview(id); }
-      if(e.target.dataset.action==='download'){ const id = Number(e.target.dataset.id); openInvoicePreview(id); }
-    });
+      <hr style="margin:12px 0" />
+
+      <div style="display:flex;justify-content:space-between">
+        <div><b>Coordinator:</b> ${inv.coordinator || "-"}</div>
+        <div><b>Email:</b> ${inv.email || "-"}</div>
+      </div>
+
+      <div style="margin-top:12px">
+        <table style="width:100%;border-collapse:collapse" border="1">
+          <thead>
+            <tr>
+              <th>SI No</th>
+              <th>Description</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>${inv.venue}</td>
+              <td>GHS ${fmt(inv.amount)}</td>
+            </tr>
+            <tr>
+              <td colspan="2" style="text-align:right"><b>TOTAL</b></td>
+              <td><b>GHS ${fmt(inv.amount)}</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:20px;text-align:right">
+        <button id="dlPdf" class="btn">Download PDF</button>
+      </div>
+    </div>
+  `;
+
+  const modal = openModal(html);
+
+  modal.querySelector("#dlPdf").addEventListener("click", () => {
+    const opt = {
+      filename: `${inv.invoiceNo}.pdf`,
+      jsPDF: { unit: "pt", format: "a4" }
+    };
+
+    html2pdf()
+      .from(modal.querySelector("#invoicePreview"))
+      .set(opt)
+      .save();
+  });
+}
+
+/************************************
+ * EVENT BINDINGS
+ ************************************/
+document.addEventListener("DOMContentLoaded", () => {
+  loadInvoices();
+
+  const btn = document.getElementById("btnGenerateInvoice");
+  if (btn) {
+    btn.addEventListener("click", openInvoiceModal);
+  }
+});
+
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("previewInv")) {
+    const id = Number(e.target.dataset.id);
+    openInvoicePreview(id);
+  }
+});
+
+
+    
+    
 
     /*******************************
      * Live stats fetch from Google Apps Script Web App
@@ -1975,6 +2065,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
