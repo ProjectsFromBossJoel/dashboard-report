@@ -140,7 +140,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         <button class="active" data-page="dashboard">🎯 Dashboard</button>
         <button data-page="institutions">🏫 Institutions</button>
         <button data-page="venues">🏛️ Halls</button>
-        <button data-page="invoicesSection">🧾 Invoices</button>
+        <button data-page="invoices">🧾 Invoices</button>
         <button data-page="users">👥 Users & Roles</button>
         <button data-page="reports">📊 Reports</button>
         
@@ -271,109 +271,21 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       </section>
 
 
-      
-<!-- INVOICES SECTION -->
-<div id="invoicesSection" class="invoice-page">
-  <div class="container">
-    <!-- FORM -->
-    <div class="form-section">
-      <h2>Invoice Form</h2>
-      <label for="institutionSelect">Institution</label>
-      <select id="institutionSelect"><option value="">-- Select Institution --</option></select>
-
-      <label for="venueSelect">Venue Booked (From Institution)</label>
-      <select id="venueSelect"><option value="">-- Select Venue --</option></select>
-
-      <label for="venueCostSelect">Venue Booked (For Cost)</label>
-      <select id="venueCostSelect">
-        <option value="">-- Select Venue --</option>
-        <option value="Effah Hall (Full Auditorium) - With Additional Services">Effah Hall (Full Auditorium) - With Additional Services</option>
-        <option value="Effah Hall (Full Auditorium) - No Additional Services">Effah Hall (Full Auditorium) - No Additional Services</option>
-        <option value="Effah Hall (Ground Floor) - With Additional Services">Effah Hall (Ground Floor) - With Additional Services</option>
-        <option value="Effah Hall (Ground Floor) - No Additional Services">Effah Hall (Ground Floor) - No Additional Services</option>
-        <option value="Ahmed Jinapor Hall">Ahmed Jinapor Hall</option>
-        <option value="Kwame Dattey Hall">Kwame Dattey Hall</option>
-        <option value="Nikoi Kotey Hall">Nikoi Kotey Hall</option>
-      </select>
-
-      <label for="venueCostInput">Venue Cost</label>
-      <input type="number" id="venueCostInput" placeholder="Auto-filled Venue Cost" readonly>
-
-      <label for="serviceInput">Additional Services</label>
-      <select id="serviceInput">
-        <option value="">-- None --</option>
-        <option value="Additional Services">Additional Services</option>
-      </select>
-
-      <label for="recipientName">Invoice Recipient Name</label>
-      <input list="recipientNameList" id="recipientName" placeholder="Recipient Name">
-      <datalist id="recipientNameList"></datalist>
-
-      <label for="invoiceLocation">Location</label>
-      <textarea id="invoiceLocation" rows="1" placeholder="Enter location"></textarea>
-
-      <label for="recipientEmail">Invoice Recipient Email</label>
-      <input list="recipientEmailList" id="recipientEmail" placeholder="Recipient Email">
-      <datalist id="recipientEmailList"></datalist>
-
-      <label for="invoiceId">Invoice No.</label>
-      <input type="text" id="invoiceId">
-
-      <label for="dated">Date</label>
-      <input type="date" id="dated">
-
-      <label for="signatureName">Signature Name</label>
-      <textarea id="signatureName" rows="1" placeholder="Name of signatory"></textarea>
-
-      <label for="totalInput">Total</label>
-      <input type="number" id="totalInput" placeholder="Total" readonly>
-
-      <div class="buttons-row">
-        <button id="generateBtn" onclick="generateInvoice()">Generate Invoice</button>
-        <button id="viewAllBtn" class="view-btn" onclick="openHistoryModal()">View All Invoices</button>
-      </div>
-    </div>
-
-    <!-- PREVIEW -->
-    <div class="preview-section">
-      <div id="invoice" class="invoice"></div>
-      <button id="downloadBtn">Download PDF</button>
-    </div>
-  </div>
-
-  <!-- HISTORY MODAL -->
-  <div id="historyModal" class="modal" aria-hidden="true">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Generated Invoices</h3>
-        <div>
-          <button id="clearHistoryBtn" style="background:#dc3545;color:#fff;">Clear</button>
-          <button class="close" id="closeModalBtn">&times;</button>
+      <section id="invoices" class="page hidden">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">Invoices</h3>
+          <div><button class="btn" id="btnGenerateInvoice">+ Generate</button></div>
         </div>
-      </div>
-      <div class="modal-body">
-        <table id="modalInvoiceTable">
-          <thead>
-            <tr>
-              <th>Invoice No.</th>
-              <th>Date</th>
-              <th>Total (GHS)</th>
-              <th>Client</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+        <div class="card">
+          <table class="table" id="invoicesTable"><thead><tr><th>Invoice #</th><th>Coordinator</th><th>Venue</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table>
+        </div>
+      </section>
+
 
 
       
       
-
+      <!-- Users & Roles -->
       <section id="users" class="page hidden">
         <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <h3 style="margin:0">Users & Roles</h3>
@@ -1407,11 +1319,24 @@ messagesBtn.addEventListener('click', () => {
 });
   </script>
 
+  
+  
+  
+<!-- Logged In As User/Admin (Email)-->
+<script>
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Show logged-in email
+  document.getElementById("loggedInUser").textContent = user.email;
+});
+</script>
 
 
-
-
-  <script>
+    <script>
     const sheetCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9htPtAQjzUItZtpzGxl71AVEqki52Kj6hqbxcenA1wEwQt0wuH5yB6gkv0Mx_UQki_MLnS5ZBRuey/pub?gid=201909864&single=true&output=csv";
     let entries = [];
 
@@ -1813,27 +1738,112 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   </script>
 
 
+  <style>
+    /* =========================
+   INVOICE POPUP MODAL
+   ========================= */
 
-  
-  
-  
-<!-- Logged In As User/Admin (Email)-->
+.invoices-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.add-btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.invoice-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 4000;
+}
+
+.invoice-modal-content {
+  background: #fff;
+  width: 95%;
+  max-width: 1400px;
+  height: 90vh;
+  margin: 3vh auto;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.invoice-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 26px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* OVERRIDE FULL PAGE */
+.invoice-modal .container {
+  display: flex;
+  height: 100%;
+}
+
+.invoice-modal .form-section,
+.invoice-modal .preview-section {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* PREVIEW SCALE */
+.invoice-modal #invoice {
+  width: 794px;
+  transform: scale(0.72);
+  transform-origin: top center;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+}
+
+  </style>
+
+
 <script>
-firebase.auth().onAuthStateChanged(user => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
 
-  // Show logged-in email
-  document.getElementById("loggedInUser").textContent = user.email;
+  const openInvoicePopup = document.getElementById("openInvoicePopup");
+const closeInvoicePopup = document.getElementById("closeInvoicePopup");
+const invoicePopup = document.getElementById("invoicePopup");
+
+openInvoicePopup.onclick = () => {
+  invoicePopup.style.display = "block";
+  document.body.style.overflow = "hidden";
+};
+
+closeInvoicePopup.onclick = () => {
+  invoicePopup.style.display = "none";
+  document.body.style.overflow = "";
+};
+
+invoicePopup.addEventListener("click", e => {
+  if (e.target === invoicePopup) {
+    invoicePopup.style.display = "none";
+    document.body.style.overflow = "";
+  }
 });
+
 </script>
 
   
-  
 </body>
 </html>
+
 
 
 
