@@ -1122,9 +1122,7 @@ function getInvoices() {
  ************************************/
 function openInvoiceModal() {
   const html = `
-    <div style="height:90vh; display:flex; flex-direction:column; padding:10px; 
-                background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2); 
-                width:90vw; max-width:800px; position:relative; z-index:1001;">
+    <div style="height:90vh; display:flex; flex-direction:column; padding:10px; background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2); width:90vw; max-width:800px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
         <h3>Generate Invoice</h3>
         <button class="btn ghost" id="closeInvoiceModal">Close</button>
@@ -1138,34 +1136,29 @@ function openInvoiceModal() {
     </div>
   `;
 
-  // Create full-screen modal overlay
+  // Create wrapper
   const modalWrapper = document.createElement('div');
-  modalWrapper.id = "modalRoot";
+  modalWrapper.id = "modalRoot"; // optional, so you can clear it later
   modalWrapper.style.position = 'fixed';
   modalWrapper.style.top = '0';
   modalWrapper.style.left = '0';
   modalWrapper.style.width = '100%';
   modalWrapper.style.height = '100%';
-  modalWrapper.style.background = 'rgba(0,0,0,0.4)'; // dark transparent overlay
-  modalWrapper.style.backdropFilter = 'blur(5px)'; // blur the dashboard behind
+  modalWrapper.style.background = 'rgba(0,0,0,0.5)';
   modalWrapper.style.display = 'flex';
   modalWrapper.style.justifyContent = 'center';
   modalWrapper.style.alignItems = 'center';
-  modalWrapper.style.zIndex = '9999'; // very high z-index to overlay everything
   modalWrapper.innerHTML = html;
 
   document.body.appendChild(modalWrapper);
 
-  // Disable scrolling on the dashboard while modal is open
-  document.body.style.overflow = 'hidden';
-
   // Close button
   modalWrapper.querySelector("#closeInvoiceModal").addEventListener("click", () => {
     modalWrapper.remove();
-    document.body.style.overflow = ''; // re-enable scrolling
-    loadInvoices(); // optional: refresh invoice list
+    loadInvoices(); // if you need to refresh invoice list
   });
 }
+
 
 
 
@@ -2092,6 +2085,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
