@@ -2118,19 +2118,15 @@ invoicePopup.addEventListener("click", e => {
   
   <!-- Invoice Generate Security -->
   <!-- Generate Invoice & Secret Code Modal Script -->
+<!-- Dashboard HTML -->
+<iframe id="invoiceIframe" src="invoice-generator.html" style="width:100%; height:80vh; border:none;"></iframe>
+
 <script>
-  // Firestore reference (make sure firebase.initializeApp() is already called)
+  // === Firebase setup (make sure firebase.initializeApp() is already called) ===
   const db = firebase.firestore();
 
-  // Open Invoice Modal function (your existing modal)
-  function openInvoiceModal() {
-    const invoicePopup = document.getElementById("invoicePopup");
-    invoicePopup.style.display = "block";
-    document.body.style.overflow = "hidden";
-  }
-
-  // Secret Code Modal
-  function openSecretCodeModal() {
+  // === Secret Code Modal ===
+  function openSecretCodeModal(onSuccess) {
     // Modal HTML
     const html = `
       <div style="
@@ -2148,7 +2144,7 @@ invoicePopup.addEventListener("click", e => {
       ">
         <h2 style="margin:0; text-align:center;">Secure Access</h2>
         <p style="text-align:center; color:#ccc; font-size:14px;">Enter the secret code to generate invoices</p>
-        <input type="text" id="secretCodeInput" placeholder="Enter code" maxlength="20"
+        <input type="text" id="secretCodeInput" placeholder="Enter secret code" maxlength="20"
           style="padding:12px; font-size:16px; border-radius:6px; border:none; outline:none; width:100%; background:#2a2a3f; color:#fff;">
         <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
           <button id="cancelSecretCode" class="btn ghost" style="background:#444; color:#fff;">Cancel</button>
@@ -2171,7 +2167,7 @@ invoicePopup.addEventListener("click", e => {
     modalWrapper.style.display = 'flex';
     modalWrapper.style.justifyContent = 'center';
     modalWrapper.style.alignItems = 'flex-start';
-    modalWrapper.style.paddingTop = '120px'; // push down
+    modalWrapper.style.paddingTop = '120px';
     modalWrapper.style.zIndex = '9999';
     modalWrapper.innerHTML = html;
 
@@ -2191,7 +2187,7 @@ invoicePopup.addEventListener("click", e => {
     modalWrapper.querySelector("#submitSecretCode").addEventListener("click", () => {
       const code = input.value.trim();
 
-      // Validate length (at least 10 characters)
+      // Minimum 10 characters (numbers, letters, symbols)
       if (!/^.{10,}$/.test(code)) {
         message.style.color = '#ff6b6b';
         message.textContent = "Code must be at least 10 characters!";
@@ -2199,19 +2195,18 @@ invoicePopup.addEventListener("click", e => {
         return;
       }
 
-      // Fetch secret code from Firebase
+      // Check code in Firebase
       db.collection("settings").doc("invoiceCode").get()
         .then(doc => {
           if (doc.exists) {
             const correctCode = doc.data().code;
-
             if (code === correctCode) {
               message.style.color = '#4caf50';
               message.textContent = "Access granted!";
               setTimeout(() => {
                 modalWrapper.remove();
                 document.body.style.overflow = '';
-                openInvoiceModal(); // Open invoice modal
+                if (typeof onSuccess === "function") onSuccess();
               }, 800);
             } else {
               message.style.color = '#ff6b6b';
@@ -2235,16 +2230,32 @@ invoicePopup.addEventListener("click", e => {
     });
   }
 
-  // Bind the Generate button
-  document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("btnGenerateInvoice");
-    if (btn) btn.addEventListener("click", openSecretCodeModal);
+  // === Listen for Generate button inside iframe ===
+  const invoiceIframe = document.getElementById("invoiceIframe");
+
+  invoiceIframe.addEventListener("load", () => {
+    const iframeDoc = invoiceIframe.contentDocument || invoiceIframe.contentWindow.document;
+    const generateBtn = iframeDoc.getElementById("generateBtn");
+
+    if (generateBtn) {
+      generateBtn.addEventListener("click", () => {
+        // Open secret code modal in parent
+        openSecretCodeModal(() => {
+          // After correct code, call generateInvoice inside iframe
+          if (invoiceIframe.contentWindow.generateInvoice) {
+            invoiceIframe.contentWindow.generateInvoice();
+          }
+        });
+      });
+    }
   });
 </script>
+
 
 
   
 </body>
 </html>
+
 
 
