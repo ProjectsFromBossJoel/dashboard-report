@@ -136,7 +136,81 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
             <div style="margin-top:12px;font-size:13px;color:var(--muted);">
   👋Welcome back <b id="loggedInUser">Loading...</b>
 
-      <div class="nav" role="navigation">
+
+
+
+<style>
+  /* ===== NAV BASE ===== */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav button {
+  padding: 10px 14px;
+  border: none;
+  background: #f4f4f4;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav button.active {
+  background: #007bff;
+  color: #fff;
+}
+
+/* ===== HAMBURGER BUTTON ===== */
+.menu-toggle {
+  display: none;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* ===== MOBILE STYLES ===== */
+@media (max-width: 768px) {
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav {
+    display: none;
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.15);
+  }
+
+  .nav.show {
+    display: flex;
+  }
+
+  .nav button {
+    font-size: 15px;
+  }
+}
+
+/* ===== MESSAGE DOT ===== */
+#newMessageDot {
+  display: none;
+  background: red;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: 6px;
+}
+
+</style>
+
+              
+      <button id="menuToggle" class="menu-toggle">☰</button>
+
+      <div class="nav" id="mobileNav" role="navigation">
         <button class="active" data-page="dashboard">🎯 Dashboard</button>
         <button data-page="institutions">🏫 Institutions</button>
         <button data-page="venues">🏛️ Halls</button>
@@ -1840,9 +1914,20 @@ invoicePopup.addEventListener("click", e => {
 
 </script>
 
+  <script>
+const menuToggle = document.getElementById("menuToggle");
+const mobileNav = document.getElementById("mobileNav");
+
+menuToggle.addEventListener("click", () => {
+  mobileNav.classList.toggle("show");
+  menuToggle.textContent = mobileNav.classList.contains("show") ? "✕" : "☰";
+});
+</script>
+
   
 </body>
 </html>
+
 
 
 
