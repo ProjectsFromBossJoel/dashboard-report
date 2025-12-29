@@ -180,20 +180,28 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
   .nav {
     display: none;
+    position: absolute;
+    top: 60px;        /* below topbar */
+    left: 10px;
+    right: 10px;
     background: #fff;
-    padding: 10px;
+    padding: 12px;
     border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,.15);
+    box-shadow: 0 10px 25px rgba(0,0,0,.2);
+    z-index: 9999;
   }
 
   .nav.show {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .nav button {
     font-size: 15px;
   }
 }
+
 
 /* ===== MESSAGE DOT ===== */
 #newMessageDot {
@@ -1963,6 +1971,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
