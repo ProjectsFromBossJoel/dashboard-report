@@ -1812,6 +1812,18 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   </script>
 
 
+    <script>
+const menuToggle = document.getElementById("menuToggle");
+const mobileNav = document.getElementById("mobileNav");
+
+menuToggle.addEventListener("click", () => {
+  mobileNav.classList.toggle("show");
+  menuToggle.textContent = mobileNav.classList.contains("show") ? "✕" : "☰";
+});
+</script>
+
+  
+
   <style>
     /* =========================
    INVOICE POPUP MODAL
@@ -1914,19 +1926,12 @@ invoicePopup.addEventListener("click", e => {
 
 </script>
 
-  <script>
-const menuToggle = document.getElementById("menuToggle");
-const mobileNav = document.getElementById("mobileNav");
 
-menuToggle.addEventListener("click", () => {
-  mobileNav.classList.toggle("show");
-  menuToggle.textContent = mobileNav.classList.contains("show") ? "✕" : "☰";
-});
-</script>
 
   
 </body>
 </html>
+
 
 
 
