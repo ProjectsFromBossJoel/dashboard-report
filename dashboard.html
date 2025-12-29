@@ -1122,7 +1122,7 @@ function getInvoices() {
  ************************************/
 function openInvoiceModal() {
   const html = `
-    <div style="height:90vh; display:flex; flex-direction:column; padding:10px; background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2)">
+    <div style="height:90vh; display:flex; flex-direction:column; padding:10px; background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2); width:90vw; max-width:800px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
         <h3>Generate Invoice</h3>
         <button class="btn ghost" id="closeInvoiceModal">Close</button>
@@ -1135,9 +1135,10 @@ function openInvoiceModal() {
       </iframe>
     </div>
   `;
-  
-  // Insert modal into the body (example)
+
+  // Create wrapper
   const modalWrapper = document.createElement('div');
+  modalWrapper.id = "modalRoot"; // optional, so you can clear it later
   modalWrapper.style.position = 'fixed';
   modalWrapper.style.top = '0';
   modalWrapper.style.left = '0';
@@ -1148,16 +1149,17 @@ function openInvoiceModal() {
   modalWrapper.style.justifyContent = 'center';
   modalWrapper.style.alignItems = 'center';
   modalWrapper.innerHTML = html;
+
   document.body.appendChild(modalWrapper);
 
-  
-  const modal = openModal(html);
-
-  modal.querySelector("#closeInvoiceModal").addEventListener("click", () => {
-    document.querySelector("#modalRoot").innerHTML = "";
-    loadInvoices();
+  // Close button
+  modalWrapper.querySelector("#closeInvoiceModal").addEventListener("click", () => {
+    modalWrapper.remove();
+    loadInvoices(); // if you need to refresh invoice list
   });
 }
+
+    
 
 /************************************
  * LOAD INVOICES INTO TABLE
@@ -2080,6 +2082,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
