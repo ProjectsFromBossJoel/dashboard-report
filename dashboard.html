@@ -254,7 +254,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 </div>
 
     </aside>
-
+<button id="menuToggle" class="menu-toggle">☰</button>
     <!-- MAIN -->
     <main class="main">
       <div class="topbar">
@@ -264,11 +264,20 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
             <button class="btn ghost" id="btnExport">Export CSV</button>
             <button class="btn" id="btnNewBooking">+ New Booking</button>
           </div>
+         
           <button id="logoutBtn">Logout</button>
+           <style>
+            .logout{
+            background: red;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: #000;
+              
+            }
+          </style>
         </div>
 
-        <button id="menuToggle" class="menu-toggle">☰</button>
-        
         <div class="flex">
           <div style="text-align:right"><div class="muted">Today</div><div style="font-weight:800"> <span id="todayDate"></span></div></div>
         </div>
@@ -1952,6 +1961,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
