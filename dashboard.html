@@ -1138,7 +1138,7 @@ function openInvoiceModal() {
     </div>
   `;
 
-  // Create modal overlay
+  // Create full-screen modal overlay
   const modalWrapper = document.createElement('div');
   modalWrapper.id = "modalRoot";
   modalWrapper.style.position = 'fixed';
@@ -1146,22 +1146,27 @@ function openInvoiceModal() {
   modalWrapper.style.left = '0';
   modalWrapper.style.width = '100%';
   modalWrapper.style.height = '100%';
-  modalWrapper.style.background = 'rgba(0,0,0,0.4)'; // semi-transparent black
-  modalWrapper.style.backdropFilter = 'blur(5px)'; // blur the background
+  modalWrapper.style.background = 'rgba(0,0,0,0.4)'; // dark transparent overlay
+  modalWrapper.style.backdropFilter = 'blur(5px)'; // blur the dashboard behind
   modalWrapper.style.display = 'flex';
   modalWrapper.style.justifyContent = 'center';
   modalWrapper.style.alignItems = 'center';
-  modalWrapper.style.zIndex = '1000'; // make sure modal is above everything
+  modalWrapper.style.zIndex = '9999'; // very high z-index to overlay everything
   modalWrapper.innerHTML = html;
 
   document.body.appendChild(modalWrapper);
 
+  // Disable scrolling on the dashboard while modal is open
+  document.body.style.overflow = 'hidden';
+
   // Close button
   modalWrapper.querySelector("#closeInvoiceModal").addEventListener("click", () => {
     modalWrapper.remove();
+    document.body.style.overflow = ''; // re-enable scrolling
     loadInvoices(); // optional: refresh invoice list
   });
 }
+
 
 
     
@@ -2087,6 +2092,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
