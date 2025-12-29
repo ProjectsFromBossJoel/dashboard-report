@@ -349,35 +349,38 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       
       <section id="institutions" class="page hidden">
-        <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h3 style="margin:0">Institutions</h3>
-          <div><button class="btn ghost" id="btnImportCSV">Import CSV</button> <button class="btn" id="btnAddInstitution">+ Add Institution</button></div>
-        </div>
-        <div class="card">
-          <div style="overflow-x:auto; overflow-y:auto; max-height:500px; border:1px solid #ccc; padding:5px;">
-          <table class="table" id="institutionsTable">
-  <thead>
-    <tr>
-      <th>Timestamp</th>
-      <th>Name of Applicant</th>
-      <th>Name of Institution/Organization/Person</th>
-      <th>Number of Participants</th>
-      <th>Venue</th>
-      <th>Event Description</th>
-      <th>Event Start Date</th>
-      <th>Event End Date</th>
-      <th>Additional Services</th>
-      <th>Time Event Starts (AM/PM)</th>
-      <th>Time Event Ends (AM/PM)</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-          </div>
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3 style="margin:0">Institutions</h3>
+    <div>
+      <button class="btn ghost" id="btnImportCSV">Import CSV</button>
+      <button class="btn" id="btnAddInstitution">+ Add Institution</button>
+    </div>
+  </div>
 
-        </div>
-      </section>
+  <div class="card" style="border:1px solid #ccc; padding:5px; max-height:500px; overflow:auto;">
+    <table class="table" id="institutionsTable" style="width:100%; border-collapse:collapse;">
+      <thead style="position: sticky; top: 0; background:#fff; z-index:1;">
+        <tr>
+          <th>Timestamp</th>
+          <th>Name of Applicant</th>
+          <th>Name of Institution/Organization/Person</th>
+          <th>Number of Participants</th>
+          <th>Venue</th>
+          <th>Event Description</th>
+          <th>Event Start Date</th>
+          <th>Event End Date</th>
+          <th>Additional Services</th>
+          <th>Time Event Starts (AM/PM)</th>
+          <th>Time Event Ends (AM/PM)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
 
+
+      
       <section id="venues" class="page hidden">
         <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <h3 style="margin:0">Halls & Pricing</h3>
@@ -389,15 +392,31 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       </section>
 
 
-      <section id="invoices" class="page hidden">
-        <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h3 style="margin:0">Invoices</h3>
-          <div><button class="btn" id="btnGenerateInvoice">+ Generate</button></div>
-        </div>
-        <div class="card">
-          <table class="table" id="invoicesTable"><thead><tr><th>Invoice #</th><th>Coordinator</th><th>Venue</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table>
-        </div>
-      </section>
+      <!-- Invoice -->
+<section id="invoices" class="page hidden">
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3 style="margin:0">Invoices</h3>
+    <div><button class="btn" id="btnGenerateInvoice">+ Generate</button></div>
+  </div>
+
+  <div class="card" style="max-height:400px; overflow-y:auto;">
+    <table class="table" id="invoicesTable" style="width:100%; border-collapse:collapse;">
+      <thead style="position: sticky; top: 0; background: #fff; z-index: 1;">
+        <tr>
+          <th>Invoice #</th>
+          <th>Coordinator</th>
+          <th>Venue</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
 
 
 
@@ -430,10 +449,10 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       <!-- Contact Messages -->
       <section id="messages" class="page hidden">
-  <div class="card">
+  <div class="card" style="border:1px solid #ccc; padding:5px; max-height:400px; overflow-y:auto;">
     <h3>Contact Messages</h3>
-    <table class="table" id="contactMessagesTable">
-      <thead>
+    <table class="table" id="contactMessagesTable" style="width:100%; border-collapse:collapse;">
+      <thead style="position: sticky; top: 0; background:#fff; z-index:1;">
         <tr>
           <th>#</th>
           <th>Name</th>
@@ -450,9 +469,6 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       
       
-
-      
-
           <!-- News Subscription -->
 <section id="news" class="page">
   <div class="card" style="margin-bottom:12px">
@@ -460,19 +476,18 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
     <p class="muted">Emails collected from website newsletter form</p>
   </div>
 
-  <div class="card">
-    <table class="table" id="subscriptionsTable">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Email</th>
-      <th>Date & Time Subscribed</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
+  <div class="card" style="border:1px solid #ccc; padding:5px; max-height:400px; overflow-y:auto;">
+    <table class="table" id="subscriptionsTable" style="width:100%; border-collapse:collapse;">
+      <thead style="position: sticky; top: 0; background:#fff; z-index:1;">
+        <tr>
+          <th>#</th>
+          <th>Email</th>
+          <th>Date & Time Subscribed</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 </section>
 
@@ -2104,6 +2119,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
