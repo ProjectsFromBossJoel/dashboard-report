@@ -2115,45 +2115,124 @@ invoicePopup.addEventListener("click", e => {
 </script>
 
 
+  <!-- Invoice Generate Security -->
+  
+  <script>
+    // Firestore reference
+const db = firebase.firestore();
+
+// Function to open the secret code modal
+function openSecretCodeModal() {
+  const html = `
+    <div style="
+      width: 400px; 
+      max-width: 90vw; 
+      background: #1a1a1a; 
+      color: #fff; 
+      padding: 30px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 25px rgba(0,0,0,0.4); 
+      display: flex; 
+      flex-direction: column; 
+      gap: 15px;
+      font-family: 'Segoe UI', sans-serif;
+    ">
+      <h2 style="margin:0; text-align:center;">Secure Access</h2>
+      <p style="text-align:center; color:#ccc; font-size:14px;">Enter the 10-digit secret code to generate invoices</p>
+      <input type="text" id="secretCodeInput" placeholder="Enter code" maxlength="10" 
+        style="padding:10px; font-size:16px; border-radius:6px; border:none; outline:none; width:100%;">
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+        <button id="cancelSecretCode" class="btn ghost" style="background:#444; color:#fff;">Cancel</button>
+        <button id="submitSecretCode" class="btn" style="background:#0a74da; color:#fff;">Submit</button>
+      </div>
+      <p id="secretCodeMessage" style="color:#ff6b6b; font-size:14px; text-align:center; display:none;"></p>
+    </div>
+  `;
+
+  // Create modal wrapper
+  const modalWrapper = document.createElement('div');
+  modalWrapper.id = "secretCodeModal";
+  modalWrapper.style.position = 'fixed';
+  modalWrapper.style.top = '0';
+  modalWrapper.style.left = '0';
+  modalWrapper.style.width = '100%';
+  modalWrapper.style.height = '100%';
+  modalWrapper.style.background = 'rgba(0,0,0,0.5)';
+  modalWrapper.style.backdropFilter = 'blur(5px)';
+  modalWrapper.style.display = 'flex';
+  modalWrapper.style.justifyContent = 'center';
+  modalWrapper.style.alignItems = 'flex-start';
+  modalWrapper.style.paddingTop = '100px'; // push down
+  modalWrapper.style.zIndex = '9999';
+  modalWrapper.innerHTML = html;
+
+  document.body.appendChild(modalWrapper);
+  document.body.style.overflow = 'hidden'; // prevent background scroll
+
+  const input = modalWrapper.querySelector("#secretCodeInput");
+  const message = modalWrapper.querySelector("#secretCodeMessage");
+
+  // Cancel button
+  modalWrapper.querySelector("#cancelSecretCode").addEventListener("click", () => {
+    modalWrapper.remove();
+    document.body.style.overflow = '';
+  });
+
+// Submit button
+modalWrapper.querySelector("#submitSecretCode").addEventListener("click", () => {
+  const code = input.value.trim();
+
+  // Regex: at least 10 characters, can include letters, numbers, symbols
+  if (!/^.{10,}$/.test(code)) {
+    message.textContent = "Code must be at least 10 characters!";
+    message.style.display = 'block';
+    return;
+  }
+
+  // Fetch secret code from Firebase
+  db.collection("settings").doc("invoiceCode").get()
+    .then(doc => {
+      if (doc.exists) {
+        const correctCode = doc.data().code;
+        if (code === correctCode) {
+          message.style.color = '#4caf50';
+          message.textContent = "Access granted!";
+          setTimeout(() => {
+            modalWrapper.remove();
+            document.body.style.overflow = '';
+            openInvoiceModal(); // Open your invoice modal
+          }, 800);
+        } else {
+          message.style.color = '#ff6b6b';
+          message.textContent = "Access denied! Wrong code.";
+        }
+      } else {
+        message.style.color = '#ff6b6b';
+        message.textContent = "Secret code not set in Firebase.";
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      message.style.color = '#ff6b6b';
+      message.textContent = "Error verifying code. Try again later.";
+    });
+});
+
+  
+
+  // Enter key submits code
+  input.addEventListener("keypress", e => {
+    if (e.key === "Enter") modalWrapper.querySelector("#submitSecretCode").click();
+  });
+}
+
+// Bind the generate button
+document.getElementById("btnGenerateInvoice").addEventListener("click", openSecretCodeModal);
+
+  </script>
+
 
   
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
