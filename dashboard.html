@@ -1104,7 +1104,7 @@ qs('#globalSearch').addEventListener('input', function(){
      * Invoice Modal + generate
      *******************************/
 /************************************
- * UTILITIES
+ * UTILITY FUNCTIONS
  ************************************/
 function fmt(n) {
   return Number(n).toLocaleString("en-GH", {
@@ -1118,13 +1118,50 @@ function getInvoices() {
 }
 
 /************************************
+ * GENERIC MODAL HELPER
+ ************************************/
+function createModal(contentHtml, options = {}) {
+  // Create wrapper
+  const modalWrapper = document.createElement("div");
+  modalWrapper.id = "modalRoot";
+  modalWrapper.style.position = "fixed";
+  modalWrapper.style.top = "0";
+  modalWrapper.style.left = "0";
+  modalWrapper.style.width = "100%";
+  modalWrapper.style.height = "100%";
+  modalWrapper.style.background = "rgba(0,0,0,0.4)";
+  modalWrapper.style.backdropFilter = "blur(5px)";
+  modalWrapper.style.display = "flex";
+  modalWrapper.style.justifyContent = "center";
+  modalWrapper.style.alignItems = "flex-start"; // push down
+  modalWrapper.style.zIndex = "9999";
+  modalWrapper.style.overflowY = "auto"; // scroll if content too tall
+  modalWrapper.innerHTML = contentHtml;
+
+  document.body.appendChild(modalWrapper);
+  document.body.style.overflow = "hidden"; // disable background scroll
+
+  // Close button handler
+  const closeBtn = modalWrapper.querySelector("#closeInvoiceModal");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      modalWrapper.remove();
+      document.body.style.overflow = "";
+      if (options.onClose) options.onClose();
+    });
+  }
+
+  return modalWrapper;
+}
+
+/************************************
  * INVOICE MODAL (iframe-based)
  ************************************/
 function openInvoiceModal() {
   const html = `
     <div style="height:90vh; display:flex; flex-direction:column; padding:10px; 
                 background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2); 
-                width:90vw; max-width:900px; margin-top:60px;">      <!-- push down -->
+                width:90vw; max-width:900px; margin-top:60px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
         <h3>Generate Invoice</h3>
         <button class="btn ghost" id="closeInvoiceModal">Close</button>
@@ -1137,34 +1174,8 @@ function openInvoiceModal() {
       </iframe>
     </div>
   `;
-
-  // Create wrapper
-  const modalWrapper = document.createElement('div');
-  modalWrapper.id = "modalRoot";
-  modalWrapper.style.position = 'fixed';
-  modalWrapper.style.top = '0';
-  modalWrapper.style.left = '0';
-  modalWrapper.style.width = '100%';
-  modalWrapper.style.height = '100%';
-  modalWrapper.style.background = 'rgba(0,0,0,0.5)';
-  modalWrapper.style.display = 'flex';
-  modalWrapper.style.justifyContent = 'center';
-  modalWrapper.style.alignItems = 'flex-start'; // align to top
-  modalWrapper.innerHTML = html;
-
-  document.body.appendChild(modalWrapper);
-
-  // Close button
-  modalWrapper.querySelector("#closeInvoiceModal").addEventListener("click", () => {
-    modalWrapper.remove();
-    loadInvoices();
-  });
+  createModal(html, { onClose: loadInvoices });
 }
-
-
-
-
-    
 
 /************************************
  * LOAD INVOICES INTO TABLE
@@ -1174,7 +1185,6 @@ function loadInvoices() {
   if (!tbody) return;
 
   tbody.innerHTML = "";
-
   const invoices = getInvoices();
 
   if (!invoices.length) {
@@ -1208,55 +1218,64 @@ function openInvoicePreview(invId) {
   if (!inv) return;
 
   const html = `
-    <div id="invoicePreview">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <h2>GTEC HOSPITALITY MANAGEMENT SERVICES</h2>
-          <div>P.O. BOX MB 28, Ministries – Accra</div>
+    <div style="height:auto; display:flex; flex-direction:column; padding:20px; 
+                background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2); 
+                width:90vw; max-width:800px; margin-top:60px;">
+      <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:10px">
+        <h3>Invoice Preview</h3>
+        <button class="btn ghost" id="closeInvoiceModal">Close</button>
+      </div>
+
+      <div id="invoicePreview">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2>GTEC HOSPITALITY MANAGEMENT SERVICES</h2>
+            <div>P.O. BOX MB 28, Ministries – Accra</div>
+          </div>
+          <div style="text-align:right">
+            <div><b>Invoice No:</b> ${inv.invoiceNo}</div>
+            <div><b>Date:</b> ${inv.date}</div>
+          </div>
         </div>
-        <div style="text-align:right">
-          <div><b>Invoice No:</b> ${inv.invoiceNo}</div>
-          <div><b>Date:</b> ${inv.date}</div>
+
+        <hr style="margin:12px 0" />
+
+        <div style="display:flex;justify-content:space-between">
+          <div><b>Coordinator:</b> ${inv.coordinator || "-"}</div>
+          <div><b>Email:</b> ${inv.email || "-"}</div>
         </div>
-      </div>
 
-      <hr style="margin:12px 0" />
+        <div style="margin-top:12px">
+          <table style="width:100%;border-collapse:collapse" border="1">
+            <thead>
+              <tr>
+                <th>SI No</th>
+                <th>Description</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>${inv.venue}</td>
+                <td>GHS ${fmt(inv.amount)}</td>
+              </tr>
+              <tr>
+                <td colspan="2" style="text-align:right"><b>TOTAL</b></td>
+                <td><b>GHS ${fmt(inv.amount)}</b></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <div style="display:flex;justify-content:space-between">
-        <div><b>Coordinator:</b> ${inv.coordinator || "-"}</div>
-        <div><b>Email:</b> ${inv.email || "-"}</div>
-      </div>
-
-      <div style="margin-top:12px">
-        <table style="width:100%;border-collapse:collapse" border="1">
-          <thead>
-            <tr>
-              <th>SI No</th>
-              <th>Description</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>${inv.venue}</td>
-              <td>GHS ${fmt(inv.amount)}</td>
-            </tr>
-            <tr>
-              <td colspan="2" style="text-align:right"><b>TOTAL</b></td>
-              <td><b>GHS ${fmt(inv.amount)}</b></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div style="margin-top:20px;text-align:right">
-        <button id="dlPdf" class="btn">Download PDF</button>
+        <div style="margin-top:20px;text-align:right">
+          <button id="dlPdf" class="btn">Download PDF</button>
+        </div>
       </div>
     </div>
   `;
 
-  const modal = openModal(html);
+  const modal = createModal(html);
 
   modal.querySelector("#dlPdf").addEventListener("click", () => {
     const opt = {
@@ -1278,9 +1297,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadInvoices();
 
   const btn = document.getElementById("btnGenerateInvoice");
-  if (btn) {
-    btn.addEventListener("click", openInvoiceModal);
-  }
+  if (btn) btn.addEventListener("click", openInvoiceModal);
 });
 
 document.addEventListener("click", e => {
@@ -2087,6 +2104,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
