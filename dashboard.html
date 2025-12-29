@@ -254,10 +254,11 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 </div>
 
     </aside>
-<button id="menuToggle" class="menu-toggle">☰</button>
+
     <!-- MAIN -->
     <main class="main">
       <div class="topbar">
+        <button id="menuToggle" class="menu-toggle">☰</button>
         <div class="search">
           <input id="globalSearch" placeholder="Search institutions, invoices, venues..." />
           <div class="right-actions">
@@ -265,15 +266,16 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
             <button class="btn" id="btnNewBooking">+ New Booking</button>
           </div>
          
-          <button id="logoutBtn">Logout</button>
+          <button id="logoutBtn" class="logout">Logout</button>
            <style>
-            .logout{
-            background: red;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            color: #000;
-              
+            .logout {
+              background: red;
+              border: none;
+              cursor: pointer;
+              padding: 8px 14px;
+              color: #fff;
+              border-radius: 6px;
+              font-weight: 600;
             }
           </style>
         </div>
@@ -1961,6 +1963,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
