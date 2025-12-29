@@ -205,14 +205,29 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
   margin-left: 6px;
 }
 
+  /* FORCE HAMBURGER VISIBILITY */
+#menuToggle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #menuToggle {
+    display: block !important;
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: #000;
+    z-index: 5000;
+  }
+}
+
 </style>
 
               
       <button id="menuToggle" class="menu-toggle">☰</button>
-      <div class="menu-toggle" id="menuToggle">
-      ☰
-    </div>
-
+     
       <div class="nav" id="mobileNav" role="navigation">
         <button class="active" data-page="dashboard">🎯 Dashboard</button>
         <button data-page="institutions">🏫 Institutions</button>
@@ -1934,6 +1949,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
