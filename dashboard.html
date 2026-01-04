@@ -1377,57 +1377,54 @@ document.addEventListener("click", e => {
 
 
     
-    
+/*******************************
+ * Live stats fetch from Google Apps Script Web App
+ *******************************/
+const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzjTb850KQfcrKEIWEO4nUx7z6e-Wua-hAOhdOd9m_usj9lKjJhDKEZ-W1nwkewS3dG/execL"; // <-- replace this with your new script URL
 
-    /*******************************
-     * Live stats fetch from Google Apps Script Web App
-     *******************************/
-    const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzjTb850KQfcrKEIWEO4nUx7z6e-Wua-hAOhdOd9m_usj9lKjJhDKEZ-W1nwkewS3dG/exec";
-
-    async function fetchLiveStats(){
-      try {
-        const res = await fetch(LIVE_STATS_URL, {cache: "no-store"});
-        if(!res.ok){
-          console.warn("Live stats fetch failed:", res.status);
-          return;
-        }
-        const data = await res.json();
-        // expected structure: {"Pending":10,"Cancelled":4,"Completed":16}
-        if(typeof data === 'object' && data !== null){
-          const pending = data.Pending || 0;
-const cancelled = data.Cancelled || 0;
-const completed = data.Completed || 0;
-
-qs('#dashPending').textContent = pending;
-qs('#dashCancelled').textContent = cancelled;
-qs('#dashCompleted').textContent = completed;
-
-// update total bookings as sum of the three
-qs('#dashBookings').textContent = pending + cancelled + completed;
-qs('#statBookings').textContent = pending + cancelled + completed;
-qs('#reportBookings').textContent = pending + cancelled + completed;
-
-// optional: keep reportPending updated
-
-qs('#reportPending').textContent = pending;
-
-
-          
-        }
-      } catch (err){
-        console.error("Error fetching live stats:", err);
-      }
+async function fetchLiveStats() {
+  try {
+    const res = await fetch(LIVE_STATS_URL, { cache: "no-store" });
+    if (!res.ok) {
+      console.warn("Live stats fetch failed:", res.status);
+      return;
     }
+    const data = await res.json();
+    // expected structure: {"Pending":10,"Cancelled":4,"Completed":16}
+    if (typeof data === 'object' && data !== null) {
+      const pending = data.Pending || 0;
+      const cancelled = data.Cancelled || 0;
+      const completed = data.Completed || 0;
 
-    /*******************************
-     * Init
-     *******************************/
-    document.addEventListener('DOMContentLoaded', ()=>{
-      updateUI(); showPage('dashboard');
-      // fetch live stats immediately and then every 30s
-      fetchLiveStats();
-      setInterval(fetchLiveStats, 30000);
-    });
+      qs('#dashPending').textContent = pending;
+      qs('#dashCancelled').textContent = cancelled;
+      qs('#dashCompleted').textContent = completed;
+
+      // update total bookings as sum of the three
+      const total = pending + cancelled + completed;
+      qs('#dashBookings').textContent = total;
+      qs('#statBookings').textContent = total;
+      qs('#reportBookings').textContent = total;
+
+      // update report pending
+      qs('#reportPending').textContent = pending;
+    }
+  } catch (err) {
+    console.error("Error fetching live stats:", err);
+  }
+}
+
+/*******************************
+ * Init
+ *******************************/
+document.addEventListener('DOMContentLoaded', () => {
+  updateUI();
+  showPage('dashboard');
+  // fetch live stats immediately and then every 30s
+  fetchLiveStats();
+  setInterval(fetchLiveStats, 30000);
+});
+
 
   </script>
 
@@ -2172,6 +2169,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
