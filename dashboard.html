@@ -1380,50 +1380,51 @@ document.addEventListener("click", e => {
      *******************************/
     const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzjTb850KQfcrKEIWEO4nUx7z6e-Wua-hAOhdOd9m_usj9lKjJhDKEZ-W1nwkewS3dG/exec";
 
-    async function fetchLiveStats(){
-      try {
-        const res = await fetch(LIVE_STATS_URL, {cache: "no-store"});
-        if(!res.ok){
-          console.warn("Live stats fetch failed:", res.status);
-          return;
-        }
-        const data = await res.json();
-        // expected structure: {"Pending":10,"Cancelled":4,"Completed":16}
-        if(typeof data === 'object' && data !== null){
-          const pending = data.Pending || 0;
-const cancelled = data.Cancelled || 0;
-const completed = data.Completed || 0;
+/* DEFINE qs — DO NOT SKIP THIS */
+function qs(sel) {
+  return document.querySelector(sel);
+}
 
-qs('#dashPending').textContent = pending;
-qs('#dashCancelled').textContent = cancelled;
-qs('#dashCompleted').textContent = completed;
+async function fetchLiveStats() {
+  try {
+    console.log("Fetching live stats...");
+    const res = await fetch(LIVE_STATS_URL, { cache: "no-store" });
+    console.log("Response status:", res.status);
 
-// update total bookings as sum of the three
-qs('#dashBookings').textContent = pending + cancelled + completed;
-qs('#statBookings').textContent = pending + cancelled + completed;
-qs('#reportBookings').textContent = pending + cancelled + completed;
+    const data = await res.json();
+    console.log("Live stats data:", data);
 
-// optional: keep reportPending updated
+    const pending = Number(data.Pending || 0);
+    const cancelled = Number(data.Cancelled || 0);
+    const completed = Number(data.Completed || 0);
+    const total = pending + cancelled + completed;
 
-qs('#reportPending').textContent = pending;
+    /* SAFE DOM UPDATES */
+    if (qs('#dashPending')) qs('#dashPending').textContent = pending;
+    if (qs('#dashCancelled')) qs('#dashCancelled').textContent = cancelled;
+    if (qs('#dashCompleted')) qs('#dashCompleted').textContent = completed;
 
+    if (qs('#dashBookings')) qs('#dashBookings').textContent = total;
+    if (qs('#statBookings')) qs('#statBookings').textContent = total;
+    if (qs('#reportBookings')) qs('#reportBookings').textContent = total;
 
-          
-        }
-      } catch (err){
-        console.error("Error fetching live stats:", err);
-      }
-    }
+    if (qs('#reportPending')) qs('#reportPending').textContent = pending;
 
-    /*******************************
-     * Init
-     *******************************/
-    document.addEventListener('DOMContentLoaded', ()=>{
-      updateUI(); showPage('dashboard');
-      // fetch live stats immediately and then every 30s
-      fetchLiveStats();
-      setInterval(fetchLiveStats, 30000);
-    });
+    console.log("Dashboard updated successfully");
+
+  } catch (err) {
+    console.error("Live stats error:", err);
+  }
+}
+
+/*******************************
+ * Init
+ *******************************/
+document.addEventListener('DOMContentLoaded', () => {
+  console.log("DOM loaded → fetching stats");
+  fetchLiveStats();
+  setInterval(fetchLiveStats, 30000);
+});
 
   </script>
 
@@ -2168,6 +2169,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
