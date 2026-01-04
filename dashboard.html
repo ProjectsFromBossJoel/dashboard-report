@@ -1380,26 +1380,16 @@ document.addEventListener("click", e => {
      *******************************/
     const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzjTb850KQfcrKEIWEO4nUx7z6e-Wua-hAOhdOd9m_usj9lKjJhDKEZ-W1nwkewS3dG/exec";
 
-/* DEFINE qs — DO NOT SKIP THIS */
-function qs(sel) {
-  return document.querySelector(sel);
-}
-
 async function fetchLiveStats() {
   try {
-    console.log("Fetching live stats...");
     const res = await fetch(LIVE_STATS_URL, { cache: "no-store" });
-    console.log("Response status:", res.status);
-
     const data = await res.json();
-    console.log("Live stats data:", data);
 
     const pending = Number(data.Pending || 0);
     const cancelled = Number(data.Cancelled || 0);
     const completed = Number(data.Completed || 0);
     const total = pending + cancelled + completed;
 
-    /* SAFE DOM UPDATES */
     if (qs('#dashPending')) qs('#dashPending').textContent = pending;
     if (qs('#dashCancelled')) qs('#dashCancelled').textContent = cancelled;
     if (qs('#dashCompleted')) qs('#dashCompleted').textContent = completed;
@@ -1410,8 +1400,6 @@ async function fetchLiveStats() {
 
     if (qs('#reportPending')) qs('#reportPending').textContent = pending;
 
-    console.log("Dashboard updated successfully");
-
   } catch (err) {
     console.error("Live stats error:", err);
   }
@@ -1420,8 +1408,7 @@ async function fetchLiveStats() {
 /*******************************
  * Init
  *******************************/
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("DOM loaded → fetching stats");
+function initDashboardStats() {
   fetchLiveStats();
   setInterval(fetchLiveStats, 30000);
 });
@@ -2169,6 +2156,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
