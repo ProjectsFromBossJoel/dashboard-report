@@ -363,16 +363,28 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         <tr>
           <th>Timestamp</th>
           <th>Name of Applicant</th>
-          <th>Name of Institution/Organization/Person</th>
-          <th>Number of Participants</th>
+          <th>Telephone</th>
+          <th>Email</th>
+          <th>Booking Type</th>
+          <th>Name of Institution</th>
+          <th>No. of Participants</th>
           <th>Venue</th>
-          <th>Event Description</th>
-          <th>Event Start Date</th>
-          <th>Event End Date</th>
           <th>Additional Services</th>
-          <th>Time Event Starts (AM/PM)</th>
-          <th>Time Event Ends (AM/PM)</th>
-        </tr>
+          <th>Standard Chair</th>
+          <th>Executive Chair</th>
+          <th>Table Qty</th>
+          <th>Table + Cloth Qty</th>
+          <th>Event Description</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>No. Days</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Name for Invoice</th>
+          <th>Email for Invoice</th>
+          <th>Status</th>
+          <th>Payment Status</th>
+          </tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -685,7 +697,7 @@ document.getElementById("updatePasswordBtn").addEventListener("click", async () 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
 <script>
-  const sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLDl2oNe9mONdejXYfXqk3hjdVZUWHsfdN47F54BS4nyufgxV_o2VaCm-upReu1ERhZZQ173TfDJ3B/pub?gid=2055986518&single=true&output=csv";
+  const sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxSToIW5dMve6h7Seq0t6n1VUbJS9ocAszS_foxwUnPnCECptsN1RwgxgTqrH80RPUaXqJRXY9nt6Z/pub?gid=0&single=true&output=csv";
 
   function loadInstitutions() {
     Papa.parse(sheetCSVUrl, {
@@ -700,17 +712,29 @@ document.getElementById("updatePasswordBtn").addEventListener("click", async () 
         data.forEach(row => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${row["Timestamp"] || ""}</td>
-            <td>${row["Name of Applicant"] || ""}</td>
-            <td>${row["Name of Institution/Organization/Person"] || ""}</td>
-            <td>${row["Number of Participants"] || ""}</td>
-            <td>${row["Venue"] || ""}</td>
-            <td>${row["Event Description"] || ""}</td>
-            <td>${row["Event Start Date"] || ""}</td>
-            <td>${row["Event End Date"] || ""}</td>
-            <td>${row["Additional Services"] || ""}</td>
-            <td>${row["Time Event Starts (Please indicate : AM/PM)."] || ""}</td>
-            <td>${row["Time Event Ends (Please indicate : AM/PM)"] || ""}</td>
+            <td>${row["TimeStamp"] || ""}</td>
+            <td>${row["applicantName"] || ""}</td>
+            <td>${row["telephone"] || ""}</td>
+            <td>${row["email"] || ""}</td>
+            <td>${row["bookingType"] || ""}</td>
+            <td>${row["institutionName"] || ""}</td>
+            <td>${row["participants"] || ""}</td>
+            <td>${row["venue"] || ""}</td>
+            <td>${row["additionalServices"] || ""}</td>
+            <td>${row["standardChair"] || ""}</td>
+            <td>${row["executiveChair"] || ""}</td>
+            <td>${row["tableQty"] || ""}</td>
+            <td>${row["tableClothQty"] || ""}</td>
+            <td>${row["eventDescription"] || ""}</td>
+            <td>${row["startDate"] || ""}</td>
+            <td>${row["endDate"] || ""}</td>
+            <td>${row["days"] || ""}</td>
+            <td>${row["startTime"] || ""}</td>
+            <td>${row["endTime"] || ""}</td>
+            <td>${row["invoiceName"] || ""}</td>
+            <td>${row["invoiceEmail"] || ""}</td>
+            <td>${row["Status"] || ""}</td>
+            <td>${row["Payment Status"] || ""}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -2119,6 +2143,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
