@@ -351,45 +351,74 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       <section id="institutions" class="page hidden">
   <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <h3 style="margin:0">Institutions</h3>
-    <div>
-      <button class="btn ghost" id="btnImportCSV">Import CSV</button>
-      <button class="btn" id="btnAddInstitution">+ Add Institution</button>
-    </div>
   </div>
 
-  <div class="card" style="border:1px solid #ccc; padding:5px; max-height:500px; overflow:auto;">
-    <table class="table" id="institutionsTable" style="width:100%; border-collapse:collapse;">
-      <thead style="position: sticky; top: 0; background:#fff; z-index:1;">
-        <tr>
-          <th>Timestamp</th>
-          <th>Name of Applicant</th>
-          <th>Telephone</th>
-          <th>Email</th>
-          <th>Booking Type</th>
-          <th>Name of Institution</th>
-          <th>No. of Participants</th>
-          <th>Venue</th>
-          <th>Additional Services</th>
-          <th>Standard Chair</th>
-          <th>Executive Chair</th>
-          <th>Table Qty</th>
-          <th>Table + Cloth Qty</th>
-          <th>Event Description</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>No. Days</th>
-          <th>Start Time</th>
-          <th>End Time</th>
-          <th>Name for Invoice</th>
-          <th>Email for Invoice</th>
-          <th>Status</th>
-          <th>Payment Status</th>
-          </tr>
-      </thead>
+        
+  <div class="card table-scroll">
+  <table class="table" id="institutionsTable">
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Name of Applicant</th>
+        <th>Telephone</th>
+        <th>Email</th>
+        <th>Booking Type</th>
+        <th>Name of Institution</th>
+        <th>No. of Participants</th>
+        <th>Venue</th>
+        <th>Additional Services</th>
+        <th>Standard Chair</th>
+        <th>Executive Chair</th>
+        <th>Table Qty</th>
+        <th>Table + Cloth Qty</th>
+        <th>Event Description</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>No. Days</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Name for Invoice</th>
+        <th>Email for Invoice</th>
+        <th>Status</th>
+        <th>Payment Status</th>
+      </tr>
+    </thead>
+
       <tbody></tbody>
     </table>
   </div>
 </section>
+
+      <!-- horizontal + vertical scrollbar -->
+      <style>
+  .table-scroll {
+    border: 1px solid #ccc;
+    padding: 5px;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto; /* ✅ horizontal scrollbar */
+    white-space: nowrap; /* ✅ prevent column wrap */
+  }
+
+  #institutionsTable {
+    min-width: 2000px; /* ✅ forces horizontal scroll */
+    border-collapse: collapse;
+  }
+
+  #institutionsTable th,
+  #institutionsTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+
+  #institutionsTable thead {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 2;
+  }
+</style>
+
 
 
       
@@ -2143,6 +2172,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
