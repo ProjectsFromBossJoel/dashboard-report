@@ -1380,7 +1380,11 @@ document.addEventListener("click", e => {
 /*******************************
  * Live stats fetch from Google Apps Script Web App
  *******************************/
-const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzjTb850KQfcrKEIWEO4nUx7z6e-Wua-hAOhdOd9m_usj9lKjJhDKEZ-W1nwkewS3dG/execL"; // <-- replace this with your new script URL
+const LIVE_STATS_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhiMK1Q-3ZwLe1pY3XoohcHbBCZTWGEdibfcQIv5jwRX4dNsar6pl40I225QbxuCnZ8JxsNsXDjoh7RErxEjm0d5jtWLxdSu3lS4eTlQsDyZPRqQm85YLTPEsqvG3XwushM51eeStR5ZqINZNpHnuyg4w8iepnto0IfVUV-NdwKCtGnz6tZ-F3FAfiiWQlbftF6EYZKyeWzACwkB63SNeuaUaqMEqU2u4SW1k0ouQdXfd11joC0HD-w-3i51UbUAOEZI5DTTUO6L-4LN2dsJkZ0c89NaQ&lib=Mj6YotvGCKq0CW5U-LQ1oLNV4QuDsYbnA"; // <-- replace this with your new script URL
+
+function qs(selector) {
+  return document.querySelector(selector);
+}
 
 async function fetchLiveStats() {
   try {
@@ -1389,24 +1393,26 @@ async function fetchLiveStats() {
       console.warn("Live stats fetch failed:", res.status);
       return;
     }
+
     const data = await res.json();
-    // expected structure: {"Pending":10,"Cancelled":4,"Completed":16}
+    // expected structure: {"Pending":5,"Completed":5,"Cancelled":2}
     if (typeof data === 'object' && data !== null) {
       const pending = data.Pending || 0;
       const cancelled = data.Cancelled || 0;
       const completed = data.Completed || 0;
 
+      // Update dashboard elements
       qs('#dashPending').textContent = pending;
       qs('#dashCancelled').textContent = cancelled;
       qs('#dashCompleted').textContent = completed;
 
-      // update total bookings as sum of the three
+      // Total bookings
       const total = pending + cancelled + completed;
       qs('#dashBookings').textContent = total;
       qs('#statBookings').textContent = total;
       qs('#reportBookings').textContent = total;
 
-      // update report pending
+      // Optional: update reportPending
       qs('#reportPending').textContent = pending;
     }
   } catch (err) {
@@ -1420,7 +1426,8 @@ async function fetchLiveStats() {
 document.addEventListener('DOMContentLoaded', () => {
   updateUI();
   showPage('dashboard');
-  // fetch live stats immediately and then every 30s
+
+  // Fetch stats immediately and every 30s
   fetchLiveStats();
   setInterval(fetchLiveStats, 30000);
 });
@@ -2169,6 +2176,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
