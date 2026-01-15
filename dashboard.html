@@ -249,11 +249,11 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         <button data-page="reports">📊 Reports</button>
         
         <button id="messagesBtn" data-page="messages">
-  📩 Contact Enquiries
+  📩 Contact Messages
   <span id="newMessageDot" style="display:none; background:red; width:10px; height:10px; border-radius:50%; margin-left:5px; display:inline-block;"></span>
 </button>
 
-        <button data-page="news">📜 Newsletter Subscriptions</button>
+        <button data-page="news">📜 News Subscribers</button>
         <button data-page="documents">🗂️ Documents</button>
         <button data-page="settings">⚙️ Settings</button>
       </div>
@@ -349,79 +349,35 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       
       <section id="institutions" class="page hidden">
-  <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <h3 style="margin:0">Institutions</h3>
-  </div>
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">Institutions</h3>
+          <div><button class="btn ghost" id="btnImportCSV">Import CSV</button> <button class="btn" id="btnAddInstitution">+ Add Institution</button></div>
+        </div>
+        <div class="card">
+          <div style="overflow-x:auto; overflow-y:auto; max-height:500px; border:1px solid #ccc; padding:5px;">
+          <table class="table" id="institutionsTable">
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Name of Applicant</th>
+      <th>Name of Institution/Organization/Person</th>
+      <th>Number of Participants</th>
+      <th>Venue</th>
+      <th>Event Description</th>
+      <th>Event Start Date</th>
+      <th>Event End Date</th>
+      <th>Additional Services</th>
+      <th>Time Event Starts (AM/PM)</th>
+      <th>Time Event Ends (AM/PM)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+          </div>
 
-        
-  <div class="card table-scroll">
-  <table class="table" id="institutionsTable">
-    <thead>
-      <tr>
-        <th>Timestamp</th>
-        <th>Name of Applicant</th>
-        <th>Telephone</th>
-        <th>Email</th>
-        <th>Booking Type</th>
-        <th>Name of Institution</th>
-        <th>No. of Participants</th>
-        <th>Venue</th>
-        <th>Additional Services</th>
-        <th>Standard Chair</th>
-        <th>Executive Chair</th>
-        <th>Table Qty</th>
-        <th>Table + Cloth Qty</th>
-        <th>Event Description</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>No. Days</th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th>Name for Invoice</th>
-        <th>Email for Invoice</th>
-        <th>Status</th>
-        <th>Payment Status</th>
-      </tr>
-    </thead>
+        </div>
+      </section>
 
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
-
-      <!-- horizontal + vertical scrollbar -->
-      <style>
-  .table-scroll {
-    border: 1px solid #ccc;
-    padding: 5px;
-    max-height: 500px;
-    overflow-y: auto;
-    overflow-x: auto; /* ✅ horizontal scrollbar */
-    white-space: nowrap; /* ✅ prevent column wrap */
-  }
-
-  #institutionsTable {
-    min-width: 2000px; /* ✅ forces horizontal scroll */
-    border-collapse: collapse;
-  }
-
-  #institutionsTable th,
-  #institutionsTable td {
-    padding: 8px;
-    border: 1px solid #ddd;
-  }
-
-  #institutionsTable thead {
-    position: sticky;
-    top: 0;
-    background: #fff;
-    z-index: 2;
-  }
-</style>
-
-
-
-      
       <section id="venues" class="page hidden">
         <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <h3 style="margin:0">Halls & Pricing</h3>
@@ -433,31 +389,15 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       </section>
 
 
-      <!-- Invoice -->
-<section id="invoices" class="page hidden">
-  <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <h3 style="margin:0">Invoices</h3>
-    <div><button class="btn" id="btnGenerateInvoice">+ Generate</button></div>
-  </div>
-
-  <div class="card" style="max-height:400px; overflow-y:auto;">
-    <table class="table" id="invoicesTable" style="width:100%; border-collapse:collapse;">
-      <thead style="position: sticky; top: 0; background: #fff; z-index: 1;">
-        <tr>
-          <th>Invoice #</th>
-          <th>Coordinator</th>
-          <th>Venue</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
-
+      <section id="invoices" class="page hidden">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">Invoices</h3>
+          <div><button class="btn" id="btnGenerateInvoice">+ Generate</button></div>
+        </div>
+        <div class="card">
+          <table class="table" id="invoicesTable"><thead><tr><th>Invoice #</th><th>Coordinator</th><th>Venue</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table>
+        </div>
+      </section>
 
 
 
@@ -488,12 +428,12 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       </section>
 
 
-      <!-- Contact Enquiries -->
+      <!-- Contact Messages -->
       <section id="messages" class="page hidden">
-  <div class="card" style="border:1px solid #ccc; padding:5px; max-height:400px; overflow-y:auto;">
-    <h3>Contact Enquiries</h3>
-    <table class="table" id="contactMessagesTable" style="width:100%; border-collapse:collapse;">
-      <thead style="position: sticky; top: 0; background:#fff; z-index:1;">
+  <div class="card">
+    <h3>Contact Messages</h3>
+    <table class="table" id="contactMessagesTable">
+      <thead>
         <tr>
           <th>#</th>
           <th>Name</th>
@@ -510,25 +450,29 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       
       
+
+      
+
           <!-- News Subscription -->
 <section id="news" class="page">
   <div class="card" style="margin-bottom:12px">
-    <h3>Newsletter Subscriptions</h3>
+    <h3>News Subscription</h3>
     <p class="muted">Emails collected from website newsletter form</p>
   </div>
 
-  <div class="card" style="border:1px solid #ccc; padding:5px; max-height:400px; overflow-y:auto;">
-    <table class="table" id="subscriptionsTable" style="width:100%; border-collapse:collapse;">
-      <thead style="position: sticky; top: 0; background:#fff; z-index:1;">
-        <tr>
-          <th>#</th>
-          <th>Email</th>
-          <th>Date & Time Subscribed</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <div class="card">
+    <table class="table" id="subscriptionsTable">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Email</th>
+      <th>Date & Time Subscribed</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
   </div>
 </section>
 
@@ -555,7 +499,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
             <td>Hall Usage Guidelines</td>
             <td>PDF</td>
             <td>
-              <a href="documents/Guidelines 2026.pdf" download class="btn">
+              <a href="documents/Guidelines for Booking _ 2026.pdf" download class="btn">
                 ⬇ Download
               </a>
             </td>
@@ -566,7 +510,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
             <td>Booking Terms & Conditions</td>
             <td>PDF</td>
             <td>
-              <a href="documents/Guidelines 2026.pdf" download class="btn">
+              <a href="documents/Guidelines for Booking _ 2026.pdf" download class="btn">
                 ⬇ Download
               </a>
             </td>
@@ -575,9 +519,9 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
           <tr>
             <td>3</td>
             <td>Price List</td>
-            <td>PDF</td>
+            <td>DOCX</td>
             <td>
-              <a href="documents/Guidelines 2026.pdf" download class="btn">
+              <a href="documents/price-list.docx" download class="btn">
                 ⬇ Download
               </a>
             </td>
@@ -726,7 +670,7 @@ document.getElementById("updatePasswordBtn").addEventListener("click", async () 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
 <script>
-  const sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxSToIW5dMve6h7Seq0t6n1VUbJS9ocAszS_foxwUnPnCECptsN1RwgxgTqrH80RPUaXqJRXY9nt6Z/pub?gid=0&single=true&output=csv";
+  const sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLDl2oNe9mONdejXYfXqk3hjdVZUWHsfdN47F54BS4nyufgxV_o2VaCm-upReu1ERhZZQ173TfDJ3B/pub?gid=2055986518&single=true&output=csv";
 
   function loadInstitutions() {
     Papa.parse(sheetCSVUrl, {
@@ -741,29 +685,17 @@ document.getElementById("updatePasswordBtn").addEventListener("click", async () 
         data.forEach(row => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${row["TimeStamp"] || ""}</td>
-            <td>${row["applicantName"] || ""}</td>
-            <td>${row["telephone"] || ""}</td>
-            <td>${row["email"] || ""}</td>
-            <td>${row["bookingType"] || ""}</td>
-            <td>${row["institutionName"] || ""}</td>
-            <td>${row["participants"] || ""}</td>
-            <td>${row["venue"] || ""}</td>
-            <td>${row["additionalServices"] || ""}</td>
-            <td>${row["standardChair"] || ""}</td>
-            <td>${row["executiveChair"] || ""}</td>
-            <td>${row["tableQty"] || ""}</td>
-            <td>${row["tableClothQty"] || ""}</td>
-            <td>${row["eventDescription"] || ""}</td>
-            <td>${row["startDate"] || ""}</td>
-            <td>${row["endDate"] || ""}</td>
-            <td>${row["days"] || ""}</td>
-            <td>${row["startTime"] || ""}</td>
-            <td>${row["endTime"] || ""}</td>
-            <td>${row["invoiceName"] || ""}</td>
-            <td>${row["invoiceEmail"] || ""}</td>
-            <td>${row["Status"] || ""}</td>
-            <td>${row["Payment Status"] || ""}</td>
+            <td>${row["Timestamp"] || ""}</td>
+            <td>${row["Name of Applicant"] || ""}</td>
+            <td>${row["Name of Institution/Organization/Person"] || ""}</td>
+            <td>${row["Number of Participants"] || ""}</td>
+            <td>${row["Venue"] || ""}</td>
+            <td>${row["Event Description"] || ""}</td>
+            <td>${row["Event Start Date"] || ""}</td>
+            <td>${row["Event End Date"] || ""}</td>
+            <td>${row["Additional Services"] || ""}</td>
+            <td>${row["Time Event Starts (Please indicate : AM/PM)."] || ""}</td>
+            <td>${row["Time Event Ends (Please indicate : AM/PM)"] || ""}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -1172,7 +1104,7 @@ qs('#globalSearch').addEventListener('input', function(){
      * Invoice Modal + generate
      *******************************/
 /************************************
- * UTILITY FUNCTIONS
+ * UTILITIES
  ************************************/
 function fmt(n) {
   return Number(n).toLocaleString("en-GH", {
@@ -1186,50 +1118,13 @@ function getInvoices() {
 }
 
 /************************************
- * GENERIC MODAL HELPER
- ************************************/
-function createModal(contentHtml, options = {}) {
-  // Create wrapper
-  const modalWrapper = document.createElement("div");
-  modalWrapper.id = "modalRoot";
-  modalWrapper.style.position = "fixed";
-  modalWrapper.style.top = "0";
-  modalWrapper.style.left = "0";
-  modalWrapper.style.width = "100%";
-  modalWrapper.style.height = "100%";
-  modalWrapper.style.background = "rgba(0,0,0,0.4)";
-  modalWrapper.style.backdropFilter = "blur(5px)";
-  modalWrapper.style.display = "flex";
-  modalWrapper.style.justifyContent = "center";
-  modalWrapper.style.alignItems = "flex-start"; // push down
-  modalWrapper.style.zIndex = "9999";
-  modalWrapper.style.overflowY = "auto"; // scroll if content too tall
-  modalWrapper.innerHTML = contentHtml;
-
-  document.body.appendChild(modalWrapper);
-  document.body.style.overflow = "hidden"; // disable background scroll
-
-  // Close button handler
-  const closeBtn = modalWrapper.querySelector("#closeInvoiceModal");
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      modalWrapper.remove();
-      document.body.style.overflow = "";
-      if (options.onClose) options.onClose();
-    });
-  }
-
-  return modalWrapper;
-}
-
-/************************************
  * INVOICE MODAL (iframe-based)
  ************************************/
 function openInvoiceModal() {
   const html = `
     <div style="height:90vh; display:flex; flex-direction:column; padding:10px; 
                 background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2); 
-                width:90vw; max-width:900px; margin-top:60px;">
+                width:90vw; max-width:900px; margin-top:60px;">      <!-- push down -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
         <h3>Generate Invoice</h3>
         <button class="btn ghost" id="closeInvoiceModal">Close</button>
@@ -1242,8 +1137,34 @@ function openInvoiceModal() {
       </iframe>
     </div>
   `;
-  createModal(html, { onClose: loadInvoices });
+
+  // Create wrapper
+  const modalWrapper = document.createElement('div');
+  modalWrapper.id = "modalRoot";
+  modalWrapper.style.position = 'fixed';
+  modalWrapper.style.top = '0';
+  modalWrapper.style.left = '0';
+  modalWrapper.style.width = '100%';
+  modalWrapper.style.height = '100%';
+  modalWrapper.style.background = 'rgba(0,0,0,0.5)';
+  modalWrapper.style.display = 'flex';
+  modalWrapper.style.justifyContent = 'center';
+  modalWrapper.style.alignItems = 'flex-start'; // align to top
+  modalWrapper.innerHTML = html;
+
+  document.body.appendChild(modalWrapper);
+
+  // Close button
+  modalWrapper.querySelector("#closeInvoiceModal").addEventListener("click", () => {
+    modalWrapper.remove();
+    loadInvoices();
+  });
 }
+
+
+
+
+    
 
 /************************************
  * LOAD INVOICES INTO TABLE
@@ -1253,6 +1174,7 @@ function loadInvoices() {
   if (!tbody) return;
 
   tbody.innerHTML = "";
+
   const invoices = getInvoices();
 
   if (!invoices.length) {
@@ -1286,64 +1208,55 @@ function openInvoicePreview(invId) {
   if (!inv) return;
 
   const html = `
-    <div style="height:auto; display:flex; flex-direction:column; padding:20px; 
-                background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.2); 
-                width:90vw; max-width:800px; margin-top:65px;">
-      <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:10px">
-        <h3>Invoice Preview</h3>
-        <button class="btn ghost" id="closeInvoiceModal">Close</button>
+    <div id="invoicePreview">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h2>GTEC HOSPITALITY MANAGEMENT SERVICES</h2>
+          <div>P.O. BOX MB 28, Ministries – Accra</div>
+        </div>
+        <div style="text-align:right">
+          <div><b>Invoice No:</b> ${inv.invoiceNo}</div>
+          <div><b>Date:</b> ${inv.date}</div>
+        </div>
       </div>
 
-      <div id="invoicePreview">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <h2>GTEC HOSPITALITY MANAGEMENT SERVICES</h2>
-            <div>P.O. BOX MB 28, Ministries – Accra</div>
-          </div>
-          <div style="text-align:right">
-            <div><b>Invoice No:</b> ${inv.invoiceNo}</div>
-            <div><b>Date:</b> ${inv.date}</div>
-          </div>
-        </div>
+      <hr style="margin:12px 0" />
 
-        <hr style="margin:12px 0" />
+      <div style="display:flex;justify-content:space-between">
+        <div><b>Coordinator:</b> ${inv.coordinator || "-"}</div>
+        <div><b>Email:</b> ${inv.email || "-"}</div>
+      </div>
 
-        <div style="display:flex;justify-content:space-between">
-          <div><b>Coordinator:</b> ${inv.coordinator || "-"}</div>
-          <div><b>Email:</b> ${inv.email || "-"}</div>
-        </div>
+      <div style="margin-top:12px">
+        <table style="width:100%;border-collapse:collapse" border="1">
+          <thead>
+            <tr>
+              <th>SI No</th>
+              <th>Description</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>${inv.venue}</td>
+              <td>GHS ${fmt(inv.amount)}</td>
+            </tr>
+            <tr>
+              <td colspan="2" style="text-align:right"><b>TOTAL</b></td>
+              <td><b>GHS ${fmt(inv.amount)}</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <div style="margin-top:12px">
-          <table style="width:100%;border-collapse:collapse" border="1">
-            <thead>
-              <tr>
-                <th>SI No</th>
-                <th>Description</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>${inv.venue}</td>
-                <td>GHS ${fmt(inv.amount)}</td>
-              </tr>
-              <tr>
-                <td colspan="2" style="text-align:right"><b>TOTAL</b></td>
-                <td><b>GHS ${fmt(inv.amount)}</b></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div style="margin-top:20px;text-align:right">
-          <button id="dlPdf" class="btn">Download PDF</button>
-        </div>
+      <div style="margin-top:20px;text-align:right">
+        <button id="dlPdf" class="btn">Download PDF</button>
       </div>
     </div>
   `;
 
-  const modal = createModal(html);
+  const modal = openModal(html);
 
   modal.querySelector("#dlPdf").addEventListener("click", () => {
     const opt = {
@@ -1365,7 +1278,9 @@ document.addEventListener("DOMContentLoaded", () => {
   loadInvoices();
 
   const btn = document.getElementById("btnGenerateInvoice");
-  if (btn) btn.addEventListener("click", openInvoiceModal);
+  if (btn) {
+    btn.addEventListener("click", openInvoiceModal);
+  }
 });
 
 document.addEventListener("click", e => {
@@ -1375,43 +1290,59 @@ document.addEventListener("click", e => {
   }
 });
 
- /*******************************
+
+    
+    
+
+    /*******************************
      * Live stats fetch from Google Apps Script Web App
      *******************************/
-    const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzjTb850KQfcrKEIWEO4nUx7z6e-Wua-hAOhdOd9m_usj9lKjJhDKEZ-W1nwkewS3dG/exec";
+    const LIVE_STATS_URL = "https://script.google.com/macros/s/AKfycbzXyA69pX8nMGJjpVm-XFo4Vbk-w0CSBeN6-Y0uQQtEKKoZatbV8KisJLqMcKtyeZx4/exec";
 
-async function fetchLiveStats() {
-  try {
-    const res = await fetch(LIVE_STATS_URL, { cache: "no-store" });
-    const data = await res.json();
+    async function fetchLiveStats(){
+      try {
+        const res = await fetch(LIVE_STATS_URL, {cache: "no-store"});
+        if(!res.ok){
+          console.warn("Live stats fetch failed:", res.status);
+          return;
+        }
+        const data = await res.json();
+        // expected structure: {"Pending":10,"Cancelled":4,"Completed":16}
+        if(typeof data === 'object' && data !== null){
+          const pending = data.Pending || 0;
+const cancelled = data.Cancelled || 0;
+const completed = data.Completed || 0;
 
-    const pending = Number(data.Pending || 0);
-    const cancelled = Number(data.Cancelled || 0);
-    const completed = Number(data.Completed || 0);
-    const total = pending + cancelled + completed;
+qs('#dashPending').textContent = pending;
+qs('#dashCancelled').textContent = cancelled;
+qs('#dashCompleted').textContent = completed;
 
-    if (qs('#dashPending')) qs('#dashPending').textContent = pending;
-    if (qs('#dashCancelled')) qs('#dashCancelled').textContent = cancelled;
-    if (qs('#dashCompleted')) qs('#dashCompleted').textContent = completed;
+// update total bookings as sum of the three
+qs('#dashBookings').textContent = pending + cancelled + completed;
+qs('#statBookings').textContent = pending + cancelled + completed;
+qs('#reportBookings').textContent = pending + cancelled + completed;
 
-    if (qs('#dashBookings')) qs('#dashBookings').textContent = total;
-    if (qs('#statBookings')) qs('#statBookings').textContent = total;
-    if (qs('#reportBookings')) qs('#reportBookings').textContent = total;
+// optional: keep reportPending updated
 
-    if (qs('#reportPending')) qs('#reportPending').textContent = pending;
+qs('#reportPending').textContent = pending;
 
-  } catch (err) {
-    console.error("Live stats error:", err);
-  }
-}
 
-/*******************************
- * Init
- *******************************/
-function initDashboardStats() {
-  fetchLiveStats();
-  setInterval(fetchLiveStats, 30000);
-});
+          
+        }
+      } catch (err){
+        console.error("Error fetching live stats:", err);
+      }
+    }
+
+    /*******************************
+     * Init
+     *******************************/
+    document.addEventListener('DOMContentLoaded', ()=>{
+      updateUI(); showPage('dashboard');
+      // fetch live stats immediately and then every 30s
+      fetchLiveStats();
+      setInterval(fetchLiveStats, 30000);
+    });
 
   </script>
 
@@ -1636,7 +1567,7 @@ firebase.auth().onAuthStateChanged(user => {
 
 
     <script>
-    const sheetCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxSToIW5dMve6h7Seq0t6n1VUbJS9ocAszS_foxwUnPnCECptsN1RwgxgTqrH80RPUaXqJRXY9nt6Z/pub?gid=0&single=true&output=csv";
+    const sheetCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9htPtAQjzUItZtpzGxl71AVEqki52Kj6hqbxcenA1wEwQt0wuH5yB6gkv0Mx_UQki_MLnS5ZBRuey/pub?gid=201909864&single=true&output=csv";
     let entries = [];
 
     // Peek next invoice number WITHOUT incrementing stored counter
@@ -2156,15 +2087,3 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
