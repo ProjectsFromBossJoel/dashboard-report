@@ -64,12 +64,24 @@
     100% { transform: translateX(0); }
   }
 
-  h2 {
-    color:white;
-    margin-bottom:20px;
-    font-size:23px;
-    font-weight:600;
-  }
+ 
+h2.title {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 23px;
+  font-weight: 600;
+  text-align: center;
+}
+
+h2.title .dashboard {
+  display: block;        /* forces next line */
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+ 
 
   .input-group {
     margin-top:15px; text-align:left; position:relative;
@@ -187,7 +199,11 @@
 
 <div class="login-box" id="loginBox">
  <img src="logo1.jpg" alt="Logo" class="logo">
-  <h2>GTEC Conference Facility</h2>
+  <h2 class="title">
+  GTEC Conference Facility
+  <span class="dashboard">Dashboard</span>
+</h2>
+
 
   <div class="input-group">
     <label>Email</label>
@@ -307,4 +323,5 @@ document.addEventListener("keydown", e => e.key === "Enter" && login());
 
 </body>
 </html>
+
 
