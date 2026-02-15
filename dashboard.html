@@ -301,49 +301,9 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       <section id="dashboard" class="page">
         <!-- Dashboard stat cards: 4 cards -->
-        <div class="dashboard-cards">
-          <div class="card stat-card">
-            <div class="small muted">Total Bookings</div>
-            <h2 id="dashBookings">0</h2>
-            <div class="muted">Bookings by venue below</div>
-          </div>
-
-          <div class="card stat-card stat-red">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="small muted">Pending</div>
-              <div class="label-pill">🔴 Pending</div>
-            </div>
-            <h2 id="dashPending">0</h2>
-            <div class="muted">Awaiting events</div>
-          </div>
-
-          <div class="card stat-card stat-ash">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="small muted">Cancelled</div>
-              <div class="label-pill">⚪ Cancelled</div>
-            </div>
-            <h2 id="dashCancelled">0</h2>
-            <div class="muted">Bookings cancelled</div>
-          </div>
-
-          <div class="card stat-card stat-green">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="small muted">Completed</div>
-              <div class="label-pill">🟢Completed</div>
-            </div>
-            <h2 id="dashCompleted">0</h2>
-            <div class="muted">Successfully completed</div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:12px">
-          <canvas id="venueChart" height="90"></canvas>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0">Recent Invoices</h3>
-          <table class="table" id="recentInvoicesTable"><thead><tr><th>Invoice</th><th>Coordinator</th><th>Venue</th><th>Amount</th><th>Status</th></tr></thead><tbody></tbody></table>
-        </div>
+<iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/6db6c39c-4efc-4c8f-ab32-15c524c4ed69/page/qSmoF" frameborder="0" style="border:0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
+  
+</iframe>
       </section>
 
 
@@ -2086,6 +2046,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
