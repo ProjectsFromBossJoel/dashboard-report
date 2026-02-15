@@ -407,13 +407,10 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
   </div>
 </section>
 
-      
-      
 
       
-
           <!-- News Subscription -->
-<section id="news" class="page">
+<section id="news" class="page hidden">
   <div class="card" style="margin-bottom:12px">
     <h3>News Subscription</h3>
     <p class="muted">Emails collected from website newsletter form</p>
@@ -795,56 +792,7 @@ document.getElementById("updatePasswordBtn").addEventListener("click", async () 
     }
 
     
-    /*******************************
- * Charts
- *******************************/
-let venueChart = null;
-async function renderChart(){
-  const ctx = document.getElementById('venueChart').getContext('2d');
 
-  // Fetch CSV data
-  Papa.parse(sheetCSVUrl, {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
-    complete: function(results){
-      const data = results.data;
-
-      // Venue names (use your defined sample venues)
-      const labels = venues.map(v => v.name);
-
-      // Count bookings per venue from CSV
-      const counts = labels.map(venueName => 
-        data.filter(row => row["Venue"] === venueName).length
-      );
-
-      // Destroy existing chart if any
-      if(venueChart) venueChart.destroy();
-
-      // Create chart
-      venueChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Bookings by Venue',
-            data: counts,
-            backgroundColor: 'rgba(37, 99, 235, 0.7)',
-            borderColor: 'rgba(37, 99, 235, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, precision: 0 } }
-        }
-      });
-    },
-    error: function(err){
-      console.error("Failed to load CSV for chart:", err);
-    }
-  });
-}
 
 
 
@@ -2046,6 +1994,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
