@@ -300,15 +300,50 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
       <!-- PAGES -->
 
       <section id="dashboard" class="page">
-        <!-- Dashboard from google looker studio-->
-<iframe 
-  width="100%" 
-  height="770" 
-  src="https://lookerstudio.google.com/embed/reporting/6db6c39c-4efc-4c8f-ab32-15c524c4ed69/page/qSmoF" 
-  frameborder="0" 
-  style="border:0; overflow:hidden;"
-  allowfullscreen>
-</iframe>
+        <!-- Dashboard stat cards: 4 cards -->
+        <div class="dashboard-cards">
+          <div class="card stat-card">
+            <div class="small muted">Total Bookings</div>
+            <h2 id="dashBookings">0</h2>
+            <div class="muted">Bookings by venue below</div>
+          </div>
+
+          <div class="card stat-card stat-red">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="small muted">Pending</div>
+              <div class="label-pill">🔴 Pending</div>
+            </div>
+            <h2 id="dashPending">0</h2>
+            <div class="muted">Awaiting events</div>
+          </div>
+
+          <div class="card stat-card stat-ash">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="small muted">Cancelled</div>
+              <div class="label-pill">⚪ Cancelled</div>
+            </div>
+            <h2 id="dashCancelled">0</h2>
+            <div class="muted">Bookings cancelled</div>
+          </div>
+
+          <div class="card stat-card stat-green">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="small muted">Completed</div>
+              <div class="label-pill">🟢Completed</div>
+            </div>
+            <h2 id="dashCompleted">0</h2>
+            <div class="muted">Successfully completed</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:12px">
+          <canvas id="venueChart" height="90"></canvas>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">Recent Invoices</h3>
+          <table class="table" id="recentInvoicesTable"><thead><tr><th>Invoice</th><th>Coordinator</th><th>Venue</th><th>Amount</th><th>Status</th></tr></thead><tbody></tbody></table>
+        </div>
       </section>
 
 
@@ -383,15 +418,12 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
         <section id="reports" class="page hidden">
         <div class="card">
           <h3>Reports</h3>
-<iframe 
-  width="100%" 
-  height="770" 
-  src="https://lookerstudio.google.com/embed/reporting/6db6c39c-4efc-4c8f-ab32-15c524c4ed69/page/qSmoF" 
-  frameborder="0" 
-  style="border:0; overflow:hidden;"
-  allowfullscreen>
-</iframe>
-          
+          <p class="muted">Quick revenue and booking exports</p>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div style="flex:1" class="card"><b>Total Revenue</b><div id="reportRevenue">GHS 0</div></div>
+            <div style="flex:1" class="card"><b>Bookings Count</b><div id="reportBookings">0</div></div>
+            <div style="flex:1" class="card"><b>Pending</b><div id="reportPending">0</div></div>
+          </div>
         </div>
       </section>
 
@@ -416,10 +448,13 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
   </div>
 </section>
 
+      
+      
 
       
+
           <!-- News Subscription -->
-<section id="news" class="page hidden">
+<section id="news" class="page">
   <div class="card" style="margin-bottom:12px">
     <h3>News Subscription</h3>
     <p class="muted">Emails collected from website newsletter form</p>
@@ -801,7 +836,56 @@ document.getElementById("updatePasswordBtn").addEventListener("click", async () 
     }
 
     
+    /*******************************
+ * Charts
+ *******************************/
+let venueChart = null;
+async function renderChart(){
+  const ctx = document.getElementById('venueChart').getContext('2d');
 
+  // Fetch CSV data
+  Papa.parse(sheetCSVUrl, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results){
+      const data = results.data;
+
+      // Venue names (use your defined sample venues)
+      const labels = venues.map(v => v.name);
+
+      // Count bookings per venue from CSV
+      const counts = labels.map(venueName => 
+        data.filter(row => row["Venue"] === venueName).length
+      );
+
+      // Destroy existing chart if any
+      if(venueChart) venueChart.destroy();
+
+      // Create chart
+      venueChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Bookings by Venue',
+            data: counts,
+            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+            borderColor: 'rgba(37, 99, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, precision: 0 } }
+        }
+      });
+    },
+    error: function(err){
+      console.error("Failed to load CSV for chart:", err);
+    }
+  });
+}
 
 
 
@@ -2003,20 +2087,3 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
