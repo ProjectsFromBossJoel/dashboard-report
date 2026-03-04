@@ -336,8 +336,19 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
           </div>
         </div>
 
+        <!-- Looker Studio chart -->
         <div class="card" style="margin-bottom:12px">
-          <canvas id="venueChart" height="90"></canvas>
+          <canvas id="venueChart" height="90">
+            <div class="card">
+          <iframe 
+          width="100%" 
+          height="770" 
+          src="https://lookerstudio.google.com/embed/reporting/6db6c39c-4efc-4c8f-ab32-15c524c4ed69/page/qSmoF" 
+          frameborder="0" 
+          style="border:0; overflow:hidden;"
+          allowfullscreen>
+          </iframe>
+          </canvas>
         </div>
       </section>
 
@@ -2082,6 +2093,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
