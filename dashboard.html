@@ -299,47 +299,9 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
 
       <!-- PAGES -->
 
-      <section id="dashboard" class="page">
-        <!-- Dashboard stat cards: 4 cards -->
-        <div class="dashboard-cards">
-          <div class="card stat-card">
-            <div class="small muted">Total Bookings</div>
-            <h2 id="dashBookings">0</h2>
-            <div class="muted">Bookings by venue below</div>
-          </div>
-
-          <div class="card stat-card stat-red">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="small muted">Pending</div>
-              <div class="label-pill">🔴 Pending</div>
-            </div>
-            <h2 id="dashPending">0</h2>
-            <div class="muted">Awaiting events</div>
-          </div>
-
-          <div class="card stat-card stat-ash">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="small muted">Cancelled</div>
-              <div class="label-pill">⚪ Cancelled</div>
-            </div>
-            <h2 id="dashCancelled">0</h2>
-            <div class="muted">Bookings cancelled</div>
-          </div>
-
-          <div class="card stat-card stat-green">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="small muted">Completed</div>
-              <div class="label-pill">🟢Completed</div>
-            </div>
-            <h2 id="dashCompleted">0</h2>
-            <div class="muted">Successfully completed</div>
-          </div>
-        </div>
-
-        <!-- Looker Studio chart -->
-        <div class="card" style="margin-bottom:12px">
-          <canvas id="venueChart" height="90">
-            <div class="card">
+<!-- Report -->
+        <section id="reports" class="page hidden">
+        <div class="card">
           <iframe 
           width="100%" 
           height="770" 
@@ -347,11 +309,9 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
           frameborder="0" 
           style="border:0; overflow:hidden;"
           allowfullscreen>
-            </div>
           </iframe>
-          </canvas>
-        </div>
       </section>
+      
 
 
       
@@ -2094,6 +2054,7 @@ invoicePopup.addEventListener("click", e => {
   
 </body>
 </html>
+
 
 
 
